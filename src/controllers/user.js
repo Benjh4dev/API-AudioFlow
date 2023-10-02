@@ -1,4 +1,6 @@
 import { handleError } from '../utils/errorHandle.js'
+import { validateUser } from '../models/user.js'
+import { insertUser, isEmailRegistered } from '../services/user.js'
 
 const getUser = (req, res) => {
     try {
@@ -18,7 +20,24 @@ const getUsers = (req, res) => {
 
 const addUser = async (req, res) => {
     try {
-        throw new Error('error')
+        const result = validateUser(req.body)
+        if (!result.success) {
+            res.status(400)
+            res.send({error: result.error})
+            return
+        }
+        const userAlreadyExists = await isEmailRegistered(result.data.email)
+        console.log(userAlreadyExists)
+        if (userAlreadyExists) {
+            res.status(400)
+            res.send({error: 'El correo electrónico ya está registrado'})
+            return
+        }
+
+        const user = await insertUser(result.data)
+        res.status(201)
+        res.send({user: user})
+        
     } catch (e) {
         console.log(e)
         handleError(res, 'ERROR_ADD_USER') 
