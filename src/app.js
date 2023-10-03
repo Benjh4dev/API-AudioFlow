@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import "dotenv/config"
 import {router} from "../src/routes/index.js"
+import db from './firebase/config.js'
 
 const app = express()
 
@@ -15,9 +16,7 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
 
-app.get('/', async (req, res) => {
-    res.send('Hello World!')
-})
+
 
 
 

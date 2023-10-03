@@ -1,17 +1,11 @@
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+ 
+// CONFIGURACION DE FIREBASE PARA LA BASE DE DATOS USANDO MODO ADMIN
+initializeApp({
+  credential: applicationDefault(),
+  
+});
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAtJ_S_BztvzCx7lM8E8Nc5VrsgtBXnGgU",
-  authDomain: "audioflow-8f509.firebaseapp.com",
-  projectId: "audioflow-8f509",
-  storageBucket: "audioflow-8f509.appspot.com",
-  messagingSenderId: "384924534660",
-  appId: "1:384924534660:web:8a1a9108ee92bfd88fffd1"
-};
-
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
+const db = getFirestore();
 export default db;
