@@ -36,4 +36,20 @@ const isEmailRegistered = async (email) => {
   }
 };
 
-export { insertUser, isEmailRegistered }
+const getUserById = async (userId) => {
+  try {
+    const userDoc = await db.collection("user").doc(userId).get()
+    
+    if (userDoc.exists) {
+      console.log("Usuario encontrado:", userDoc.data())
+      return userDoc.data();
+    } else {
+      throw new Error("Usuario no encontrado");
+    }
+  } catch (error) {
+    console.error("Error al obtener el usuario:", error);
+    throw error;
+  }
+};
+
+export { insertUser, isEmailRegistered, getUserById }
