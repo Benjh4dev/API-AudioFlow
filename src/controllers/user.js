@@ -33,7 +33,7 @@ const addUser = async (req, res) => {
             res.send({error: 'El correo electrónico ya está registrado'})
             return
         }
-
+        
         const user = await insertUser(result.data)
         res.status(201)
         res.send({user: user})
