@@ -1,7 +1,7 @@
 import db from "../firebase/config.js"
 import { hashPassword } from "../utils/passwordHash.js";
 
-const insertUser = async ({ username, email, password }) => {
+const insertUser = async ({ username, email, password, picture_url }) => {
   try {
     const userCollection = db.collection("user")
     const hashedPassword = await hashPassword(password)
@@ -10,6 +10,7 @@ const insertUser = async ({ username, email, password }) => {
       username,
       email,
       password: hashedPassword,
+      picture_url: ""
     };
 
     const docRef = await userCollection.add(newUser);
