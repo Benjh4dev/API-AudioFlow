@@ -1,6 +1,5 @@
 import db from "../firebase/config.js"
-import { hashPassword } from "../utils/passwordHash.js";
-
+import { hashPassword } from "../utils/passwordHandle.js";
 
 const insertUser = async ({ username, email, password }) => {
   try {
@@ -16,7 +15,7 @@ const insertUser = async ({ username, email, password }) => {
 
     const docRef = await userCollection.add(newUser);
     const user = { id: docRef.id, ...newUser }
-   
+    delete user.password; 
     console.log("Usuario agregado con ID: ", docRef.id)
     return user;
   } catch (error) {
@@ -33,8 +32,9 @@ const removeUser = async (userId) => {
     if (userDoc.exists) {
       await userDocRef.delete()
       console.log("Usuario eliminado:", userId)
+      return true
     } else {
-      throw { message: "Usuario no encontrado", statusCode: 404 };
+      return false
     }
   } catch (error) {
     console.error("Error al eliminar el usuario:", error)
@@ -54,15 +54,8 @@ const updateUser = async (userId, updates) => {
 const getUserById = async (userId) => {
   try {
     const userDoc = await db.collection("user").doc(userId).get()
-    
-    if (userDoc.exists) {
-      const userData = userDoc.data()
-      delete userData.password; 
-      console.log("Usuario encontrado:", userDoc.data())
-      return userData
-    } else {
-      throw { message: "Usuario no encontrado", statusCode: 404 };
-    }
+    console.log("Usuario encontrado:", userDoc.data())
+    return userDoc.data()
   } catch (error) {
     console.error("Error al obtener el usuario:", error);
     throw error;

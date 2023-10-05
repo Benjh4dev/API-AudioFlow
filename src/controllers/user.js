@@ -7,7 +7,10 @@ const getUser = async (req, res) => {
     try {
         const userId = req.params.id
         const userData = await getUserById(userId)
-
+        if(!userData) {
+            res.status(404).json({ message: "Usuario no encontrado." });
+            return;
+        }
         res.status(200).json(userData);
     } catch (error) {
         console.log(error.message)
@@ -26,7 +29,7 @@ const getUsers = (req, res) => {
 const addUser = async (req, res) => {
     try {
         const result = validateUser(req.body)
-        
+
         let hasErrors = !result.success;
         const errorIssues = result.error ? [...result.error.issues] : [];
 
@@ -86,8 +89,12 @@ const deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
 
-        await removeUser(userId);
-
+        const isUser = await removeUser(userId);
+        if (!isUser) {
+            res.status(404).json({ message: "Usuario no encontrado." });
+            return;
+        }
+    
         res.status(200).json({ message: "Usuario eliminado con éxito." });
     } catch (error) {
         console.error(error.message);
