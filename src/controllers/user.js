@@ -1,19 +1,27 @@
+import { z } from 'zod';
 import { handleError } from '../utils/errorHandle.js'
 import { validateUser } from '../models/user.js'
-import { insertUser, isEmailRegistered } from '../services/user.js'
+import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail } from '../services/user.js'
 
-const getUser = (req, res) => {
+const getUser = async (req, res) => {
     try {
-        throw new Error('error')
-    } catch (e) {
-        handleError(res, 'ERROR_GET_USER' ) 
+        const userId = req.params.id
+        const userData = await getUserById(userId)
+        if(!userData) {
+            res.status(404).json({ message: "Usuario no encontrado." });
+            return;
+        }
+        res.status(200).json(userData);
+    } catch (error) {
+        console.log(error.message)
+        handleError(res, 'ERROR_GET_USER_BY_ID')
     }
 }
 
 const getUsers = (req, res) => {
     try {
         throw new Error('error')
-    } catch (e) {
+    } catch (error) {
         handleError(res,  'ERROR_GET_USERS') 
     }
 }
@@ -21,42 +29,76 @@ const getUsers = (req, res) => {
 const addUser = async (req, res) => {
     try {
         const result = validateUser(req.body)
-        if (!result.success) {
-            res.status(400)
-            res.send({error: result.error})
-            return
+
+        let hasErrors = !result.success;
+        const errorIssues = result.error ? [...result.error.issues] : [];
+
+        if(req.body.username) {
+            const usernameExists = await verifyUsername(req.body.username)
+            if (usernameExists) {
+                const usernameError = {
+                    code: z.ZodIssueCode.custom,
+                    path: ['username'],
+                    message: 'El nombre de usuario ya está registrado'
+                };
+                errorIssues.push(usernameError);
+                hasErrors = true;
+            }
         }
-        const userAlreadyExists = await isEmailRegistered(result.data.email)
-        console.log(userAlreadyExists)
-        if (userAlreadyExists) {
+
+        if(req.body.email) {
+            const emailExists = await verifyEmail(req.body.email)
+            if (emailExists) {
+                const emailError = {
+                    code: z.ZodIssueCode.custom,
+                    path: ['email'],
+                    message: 'El correo electrónico ya está registrado'
+                };
+                errorIssues.push(emailError);
+                hasErrors = true;
+            }
+        }
+
+        if (hasErrors) {
             res.status(400)
-            res.send({error: 'El correo electrónico ya está registrado'})
+            res.send({ error: new z.ZodError(errorIssues) });
             return
         }
 
         const user = await insertUser(result.data)
         res.status(201)
         res.send({user: user})
-        
-    } catch (e) {
-        console.log(e)
+    } catch (error) {
+        console.log(error)
         handleError(res, 'ERROR_ADD_USER') 
     }
 }
 
-const updateUser = (req, res) => {
-    try {
-        throw new Error('error')
-    } catch (e) {
-        handleError(res, 'ERROR_UPDATE_USER') 
-    }
-}
 
-const deleteUser = (req, res) => {
+const updateUser = async (req, res) => {
     try {
-        throw new Error('error')
+        console.log("WIP: updateUser");
+
     } catch (error) {
-        handleError(res, 'ERROR_DELETE_USER') 
+        console.log(error);
+        handleError(res, 'ERROR_UPDATE_USER');
+    }
+};
+
+const deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+
+        const isUser = await removeUser(userId);
+        if (!isUser) {
+            res.status(404).json({ message: "Usuario no encontrado." });
+            return;
+        }
+    
+        res.status(200).json({ message: "Usuario eliminado con éxito." });
+    } catch (error) {
+        console.error(error.message);
+        handleError(res, 'ERROR_DELETE_USER');
     }
 }
 
