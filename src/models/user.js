@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 const userModel = z.object({
     username: z.string().min(3, {
         message: 'El nombre de usuario debe tener al menos 3 caracteres'
@@ -25,5 +24,6 @@ const userModel = z.object({
 const validateUser = (object) => {
     return userModel.safeParse(object)
 }
+
 
 export { userModel, validateUser }
