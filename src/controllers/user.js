@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { handleError } from '../utils/errorHandle.js'
 import { validateUser } from '../models/user.js'
 import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail } from '../services/user.js'
