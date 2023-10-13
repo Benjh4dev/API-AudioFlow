@@ -1,6 +1,6 @@
 import db from "../firebase/config.js"
-import { comparePassword } from "../utils/passwordHandle.js";
-import { generateToken } from "../utils/jwtHandle.js";
+import { comparePassword } from "../utils/passwordHandle.js"
+import { generateToken } from "../utils/jwtHandle.js"
 
 const authenticateUser = async (email, password) => {
     try {
@@ -20,14 +20,15 @@ const authenticateUser = async (email, password) => {
         if (passwordMatch) {
             delete userData.password
             const token = generateToken(id)
-            return { found: true, token: token, user: userData }
+            const userWithId = { id, ...userData };
+            return { found: true, token, user: userWithId }
         } else {
             return { found: false }
         }
 
     } catch (error) {
-        console.error("Error al autenticar el usuario:", error);
-        throw error;
+        console.error("Error al autenticar el usuario:", error)
+        throw error
     }
 };
 
