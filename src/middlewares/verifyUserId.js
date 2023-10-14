@@ -1,5 +1,6 @@
+import {getUserById} from '../services/user.js'
 
-const verifyUserId = (req, res, next) => {
+const verifyUserId = async (req, res, next) => {
     try {
       const userIdFromToken = req.user.id 
       const userIdFromRequest = req.params.id 
@@ -7,6 +8,12 @@ const verifyUserId = (req, res, next) => {
       if (!userIdFromToken || !userIdFromRequest) {
         res.status(401)
         return res.send({ message: 'No se entregan los parametros' })
+      }
+
+      const user = await getUserById(userIdFromRequest);
+      if (!user) {
+      res.status(404);
+      return res.send({ message: 'Usuario no encontrado' });
       }
   
       if (userIdFromToken !== userIdFromRequest) {
