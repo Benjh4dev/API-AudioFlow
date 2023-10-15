@@ -5,7 +5,6 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-
     "dev": "nodemon src/app.js"
   },
   "keywords": [],
@@ -19,6 +18,8 @@
     "firebase": "10.3.1",
     "firebase-admin": "11.11.0",
     "jsonwebtoken": "9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "validate-image-type": "^2.0.0",
     "zod": "3.22.2"
   },
   "devDependencies": {
