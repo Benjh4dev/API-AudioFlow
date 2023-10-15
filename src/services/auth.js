@@ -1,4 +1,4 @@
-import db from "../firebase/config.js"
+import {db} from "../firebase/config.js"
 import { comparePassword } from "../utils/passwordHandle.js"
 import { generateToken } from "../utils/jwtHandle.js"
 

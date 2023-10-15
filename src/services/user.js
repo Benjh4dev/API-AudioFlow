@@ -1,4 +1,4 @@
-import db from "../firebase/config.js"
+import {db} from "../firebase/config.js"
 import { hashPassword } from "../utils/passwordHandle.js";
 
 const insertUser = async ({ username, email, password }) => {
@@ -42,13 +42,27 @@ const removeUser = async (userId) => {
   }
 }
 
-const updateUserById = async (userId, email, password) => {
+const updatePasswordService = async (userId, password) => {
   try {
     const userRef = db.collection('user').doc(userId)
     const hashedPassword = await hashPassword(password)
 
-    await userRef.update({email, password: hashedPassword})
-    console.log(`Usuario con ID ${userId} editado exitosamente.`)
+    await userRef.update({password: hashedPassword})
+    const userSnapshot = await userRef.get()
+    const userData = userSnapshot.data()
+    delete userData.password
+    return userData
+  } catch (error) {
+    console.log("Error al editar el usuario:", error)
+    throw error
+  }
+}
+
+const updateEmailService = async (userId, email) => {
+  try {
+    const userRef = db.collection('user').doc(userId)
+
+    await userRef.update({email})
     const userSnapshot = await userRef.get()
     const userData = userSnapshot.data()
     delete userData.password
@@ -115,4 +129,4 @@ const verifyUsername = async (username) => {
 
 
 
-export { insertUser, removeUser, verifyUsername, verifyEmail, getUserById, checkEmailForEdit, updateUserById }
+export { insertUser, removeUser, verifyUsername, verifyEmail, getUserById, checkEmailForEdit, updatePasswordService, updateEmailService }
