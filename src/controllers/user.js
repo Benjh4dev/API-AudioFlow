@@ -6,7 +6,6 @@ import { validateUserEmail } from '../models/userEmail.js';
 import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
 import { storage } from '../firebase/config.js';
 import { verifyType } from '../utils/imageHandle.js';
-import multer from 'multer';
 
 const getUser = async (req, res) => {
     try {
@@ -91,7 +90,7 @@ const updatePassword = async (req, res) => {
         if(req.body.password !== req.body.confirmPassword) {
             const passwordError = {
                 code: z.ZodIssueCode.custom,
-                path: ['password'],
+                path: ['confirmPassword'],
                 message: 'Las contraseñas no coinciden'
             };
             errorIssues.push(passwordError)
