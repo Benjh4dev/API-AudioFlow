@@ -3,9 +3,9 @@ import { handleError } from '../utils/errorHandle.js'
 import { validateUser } from '../models/user.js'
 import { validateUserEditionPassword } from '../models/userEdition.js';
 import { validateUserEmail } from '../models/userEmail.js';
-import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
+import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updateProfilePic, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
 import { comparePassword } from '../utils/passwordHandle.js';
-import { verifyType } from '../utils/imageHandle.js';
+import { verifyType, uploadToStorage } from '../utils/imageHandle.js';
 
 const getUser = async (req, res) => {
     try {
