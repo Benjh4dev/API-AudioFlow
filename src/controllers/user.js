@@ -3,9 +3,8 @@ import { handleError } from '../utils/errorHandle.js'
 import { validateUser } from '../models/user.js'
 import { validateUserEditionPassword } from '../models/userEdition.js';
 import { validateUserEmail } from '../models/userEmail.js';
-import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
-import { storage } from '../firebase/config.js';
-import { verifyType } from '../utils/imageHandle.js';
+import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updateProfilePic, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
+import { verifyType, uploadToStorage } from '../utils/imageHandle.js';
 
 const getUser = async (req, res) => {
     try {
@@ -155,41 +154,37 @@ const updateEmail = async (req, res) => {
 
 const updateProfilePicture = async (req, res) => {
     try {
-        console.log(req.body)
-        // Verificar si hay un archivo en la solicitud
+        const userId = req.params.id
+        const userData = await getUserById(userId)
+
+        if(!userData) {
+            res.status(404).json({ message: "Usuario no encontrado." })
+            return;
+        }
+
+        if(!userId){
+            res.status(404).send({error: 'El usuario no ha sido encontrado.'})
+        }
+        console.log(req.file)
         if (!req.file) {
             return res.status(400).json({ error: 'No se proporcionó un archivo' })
         }
+        
+        const valid = await verifyType(req.file)
+        console.log(valid)
 
-        const valid = verifyType(req.file)
+        if(!valid.ok) {
+            return res.status(400).json({ error: 'Tipo de archivo inválido, solo se aceptan jpeg, jpg o png.' })
+        }
 
         const imageUrl = await uploadToStorage(req.file)
 
-        res.json({ imageUrl })
+        const user = await updateProfilePic(userId, imageUrl)
+
+        res.status(200).json({ user })
     } catch (error) {
         console.error('Error al procesar la solicitud:', error)
         res.status(500).json({ error: 'Error al subir el archivo' })
-    }
-};
-
-const uploadToStorage = async (file) => {
-    try { 
-        const bucket = storage.bucket()
-        const fileUpload = bucket.file(file.originalname)
-        const fileBuffer = file.buffer
-        await fileUpload.save(fileBuffer, {
-            metadata: {
-                contentType: file.mimetype,
-            },
-        })
-        const [url] = await fileUpload.getSignedUrl({
-            action: 'read', 
-            expires: '01-01-2500',
-        })
-        return url
-    } catch (error) {
-        console.error('Error al subir el archivo:', error);
-        throw error;
     }
 };
 

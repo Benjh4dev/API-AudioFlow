@@ -73,6 +73,20 @@ const updateEmailService = async (userId, email) => {
   }
 };
 
+const updateProfilePic = async (userId, picture_url) => {
+  try {
+    const userRef = db.collection('user').doc(userId)
+    await userRef.update({picture_url})
+    const userSnapshot = await userRef.get()
+    const userData = userSnapshot.data()
+    delete userData.password
+    return userData
+  } catch (error) {
+    console.log("Error al editar el usuario:", error)
+    throw error
+  }
+}
+
 const getUserById = async (userId) => {
   try {
     const userDoc = await db.collection("user").doc(userId).get()
@@ -129,4 +143,4 @@ const verifyUsername = async (username) => {
 
 
 
-export { insertUser, removeUser, verifyUsername, verifyEmail, getUserById, checkEmailForEdit, updatePasswordService, updateEmailService }
+export { insertUser, removeUser, verifyUsername, verifyEmail, getUserById, checkEmailForEdit, updateProfilePic, updatePasswordService, updateEmailService }
