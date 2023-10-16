@@ -3,8 +3,9 @@ import { handleError } from '../utils/errorHandle.js'
 import { validateUser } from '../models/user.js'
 import { validateUserEditionPassword } from '../models/userEdition.js';
 import { validateUserEmail } from '../models/userEmail.js';
-import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updateProfilePic, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
-import { verifyType, uploadToStorage } from '../utils/imageHandle.js';
+import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
+import { comparePassword } from '../utils/passwordHandle.js';
+import { verifyType } from '../utils/imageHandle.js';
 
 const getUser = async (req, res) => {
     try {
@@ -85,6 +86,19 @@ const updatePassword = async (req, res) => {
 
         let hasErrors = !result.success
         const errorIssues = result.error ? [...result.error.issues] : []
+
+        const findUser = await getUserById(userId);
+        const verifyCurrentPassword = await comparePassword(req.body.currentPassword, findUser.password);
+
+        if (!verifyCurrentPassword) {
+            const currentPasswordError = {
+                code: z.ZodIssueCode.custom,
+                path: ['currentPassword'],
+                message: 'La contraseña actual es incorrecta'
+            };
+            errorIssues.push(currentPasswordError)
+            hasErrors = true;
+        }
 
         if(req.body.password !== req.body.confirmPassword) {
             const passwordError = {
