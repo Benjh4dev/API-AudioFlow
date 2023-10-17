@@ -168,6 +168,7 @@ const updateEmail = async (req, res) => {
 
 const updateProfilePicture = async (req, res) => {
     try {
+        console.log(req.body)
         const userId = req.params.id
         const userData = await getUserById(userId)
 
@@ -194,8 +195,12 @@ const updateProfilePicture = async (req, res) => {
         const imageUrl = await uploadToStorage(req.file)
 
         const user = await updateProfilePic(userId, imageUrl)
+        const userWithId = {
+            ...user,
+            id: userId
+        }
 
-        res.status(200).json({ user })
+        res.status(200).json({ userWithId })
     } catch (error) {
         console.error('Error al procesar la solicitud:', error)
         res.status(500).json({ error: 'Error al subir el archivo' })
