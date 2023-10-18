@@ -5,11 +5,11 @@ import { getFirestore } from "firebase-admin/firestore"
 import admin from 'firebase-admin';
 import { getStorage } from "firebase-admin/storage"
  
-const serviceAccount = process.env.GOOGLE_APPLICATION_CREDENTIALS
+const storageURL = process.env.STORAGE_URL
 // CONFIGURACION DE FIREBASE PARA LA BASE DE DATOS USANDO MODO ADMIN
 initializeApp({
   credential: admin.credential.applicationDefault(),
-  storageBucket: "gs://test-cd528.appspot.com"
+  storageBucket: storageURL
 });
 
 const db = getFirestore();
