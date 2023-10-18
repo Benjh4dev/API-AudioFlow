@@ -2,8 +2,7 @@ import multer from 'multer'
 import { handleError } from '../utils/errorHandle.js'
 const upload = multer()
 
-const uploadMiddleware = (req, res, next) => {
-    
+const uploadMiddleware = (req, res, next) => {  
     try {
         upload.single('file')(req, res, (err) => {
             if (err) {
