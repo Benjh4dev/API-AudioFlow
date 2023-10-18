@@ -1,4 +1,4 @@
-import db from "../firebase/config.js"
+import {db} from "../firebase/config.js"
 import { hashPassword } from "../utils/passwordHandle.js";
 
 const insertUser = async ({ username, email, password }) => {
@@ -42,19 +42,54 @@ const removeUser = async (userId) => {
   }
 }
 
-const updateUser = async (userId, updates) => {
+const updatePasswordService = async (userId, password) => {
   try {
-    console.log("WIP: updateUser")
+    const userRef = db.collection('user').doc(userId)
+    const hashedPassword = await hashPassword(password)
+
+    await userRef.update({password: hashedPassword})
+    const userSnapshot = await userRef.get()
+    const userData = userSnapshot.data()
+    delete userData.password
+    return userData
   } catch (error) {
-    console.log("Error al editar el usuario:", error);
-    throw error;
+    console.log("Error al editar el usuario:", error)
+    throw error
+  }
+}
+
+const updateEmailService = async (userId, email) => {
+  try {
+    const userRef = db.collection('user').doc(userId)
+
+    await userRef.update({email})
+    const userSnapshot = await userRef.get()
+    const userData = userSnapshot.data()
+    delete userData.password
+    return userData
+  } catch (error) {
+    console.log("Error al editar el usuario:", error)
+    throw error
   }
 };
+
+const updateProfilePic = async (userId, picture_url) => {
+  try {
+    const userRef = db.collection('user').doc(userId)
+    await userRef.update({picture_url})
+    const userSnapshot = await userRef.get()
+    const userData = userSnapshot.data()
+    delete userData.password
+    return userData
+  } catch (error) {
+    console.log("Error al editar el usuario:", error)
+    throw error
+  }
+}
 
 const getUserById = async (userId) => {
   try {
     const userDoc = await db.collection("user").doc(userId).get()
-    console.log("Usuario encontrado:", userDoc.data())
     return userDoc.data()
   } catch (error) {
     console.error("Error al obtener el usuario:", error);
@@ -72,7 +107,27 @@ const verifyEmail = async (email) => {
     console.error("Error al verificar el correo electrónico en la base de datos:", error)
     throw error
   }
-};
+}
+
+const checkEmailForEdit = async (userId, email) => {
+  try {
+    const userCollection = db.collection("user");
+
+    const emailQuerySnapshot = await userCollection.where("email", "==", email).get();
+
+    if (!emailQuerySnapshot.empty) {
+      const usersWithSameEmail = emailQuerySnapshot.docs.filter(doc => doc.id !== userId)
+      return usersWithSameEmail.length > 0
+    }
+
+    return false
+  } catch (error) {
+    console.error("Error al verificar el correo electrónico en la base de datos durante la edición:", error)
+    throw error
+  }
+}
+
+
 
 const verifyUsername = async (username) => {
   try {
@@ -88,4 +143,4 @@ const verifyUsername = async (username) => {
 
 
 
-export { insertUser, removeUser, verifyUsername, verifyEmail, getUserById }
+export { insertUser, removeUser, verifyUsername, verifyEmail, getUserById, checkEmailForEdit, updateProfilePic, updatePasswordService, updateEmailService }
