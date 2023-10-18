@@ -2,6 +2,7 @@ import { verifyType } from "../utils/imageHandle.js"
 import z from 'zod'
 import { fileTypeFromBuffer } from "file-type"
 import { handleError } from "../utils/errorHandle.js"
+import { calcularDuracionEnSegundos } from "../utils/durationHandle.js"
 
 const checkTypes = async (req, res, next) => {   
     try {
@@ -52,9 +53,13 @@ const checkTypes = async (req, res, next) => {
             return
         }
 
+        const duracionEnSegundos = await calcularDuracionEnSegundos(audioFile.buffer, audioType.mime);
+        req.body.duration = duracionEnSegundos
+
         console.log("ta weno mi papu")
         next()
     } catch (error) {
+        console.log(error)
         handleError(res, 'ERROR_UPLOAD_FILE')
     }
 }
