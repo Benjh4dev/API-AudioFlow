@@ -1,13 +1,17 @@
 import { config } from 'dotenv';
 
-import { initializeApp, applicationDefault } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp } from "firebase-admin/app"
+import { getFirestore } from "firebase-admin/firestore"
+import admin from 'firebase-admin';
+import { getStorage } from "firebase-admin/storage"
  
+const serviceAccount = process.env.GOOGLE_APPLICATION_CREDENTIALS
 // CONFIGURACION DE FIREBASE PARA LA BASE DE DATOS USANDO MODO ADMIN
 initializeApp({
-  credential: applicationDefault(),
-  
+  credential: admin.credential.applicationDefault(),
+  storageBucket: "gs://test-cd528.appspot.com"
 });
 
 const db = getFirestore();
-export default db;
+const storage = getStorage()
+export { db , storage }
