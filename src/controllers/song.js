@@ -1,7 +1,7 @@
 import { validateSong } from "../models/song.js"
 import { z } from "zod"
 import { uploadToStorage } from "../utils/storageHandle.js"
-import { insertSong } from "../services/song.js"
+import { insertSong, getAllSongs } from "../services/song.js"
 import { handleError } from "../utils/errorHandle.js"
 
 const addSong = async (req, res) => {
@@ -22,4 +22,17 @@ const addSong = async (req, res) => {
     
 }
 
-export { addSong } 
+const getSongs = async (req, res) => {
+  try {
+    const songs = await getAllSongs();
+    if (songs.length == 0) return res.status(404).send("No hay canciones en el sistema");
+    else {
+      res.status(201);
+      res.json(songs);
+    }
+  } catch (error) {
+    handleError(res, 'ERROR_FETCHING_SONGS');
+  };
+};
+
+export { addSong, getSongs } 
