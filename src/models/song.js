@@ -6,7 +6,13 @@ const songModel = z.object({
         invalid_type_error: "El nombre de la canción debe ser un texto",
     }).max(45, {
         message: 'La canción debe tener un máximo de 45 caracteres'
-    })
+    }),
+    artist: z.string({
+        required_error: "El nombre del artista es requerido",
+        invalid_type_error: "El nombre del artista debe ser un texto",
+    }).max(45, {
+        message: 'El nombre del artista debe tener un máximo de 45 caracteres'
+    }),
 })
 
 
