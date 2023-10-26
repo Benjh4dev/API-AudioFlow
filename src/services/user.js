@@ -13,11 +13,11 @@ const insertUser = async ({ username, email, password }) => {
       picture_url: ""
     };
 
-    const docRef = await userCollection.add(newUser)
-    await createReproductor(docRef.id)
-    const user = { id: docRef.id, ...newUser }
+    const userDocRef = await userCollection.add(newUser)
+    await createPlayer(userDocRef.id)
+    const user = { id: userDocRef.id, ...newUser }
     delete user.password;
-    console.log("Usuario agregado con ID: ", docRef.id)
+    console.log("Usuario agregado con ID: ", userDocRef.id)
     return user
   } catch (error) {
     console.error("Error al agregar el usuario a la base de datos:", error)
@@ -25,12 +25,12 @@ const insertUser = async ({ username, email, password }) => {
   }
 };
 
-const createReproductor = async (user_id) => {
+const createPlayer = async (user_id) => {
   try {
-    const reproductorCollection = db.collection("reproductor")
+    const playerCollection = db.collection("player")
     const currentTime = 0
     const volume = 100
-    await reproductorCollection.add({user_id, currentTime, volume})
+    await playerCollection.add({user_id, currentTime, volume})
   } catch (error) {
     console.error("Error al crear el reproductor:", error)
     throw error
