@@ -149,6 +149,19 @@ const updateEmail = async (req, res) => {
             }
         }
         
+        const findUser = await getUserById(userId)
+        if(req.body.password) {
+            const verifyCurrentPassword = await comparePassword(req.body.password, findUser.password)
+            if (!verifyCurrentPassword) {
+                const currentPasswordError = {
+                    code: z.ZodIssueCode.custom,
+                    path: ['password'],
+                    message: 'La contraseña actual es incorrecta'
+                };
+                errorIssues.push(currentPasswordError)
+                hasErrors = true;
+            }
+        }
         
         if (hasErrors) {
             res.status(400)
