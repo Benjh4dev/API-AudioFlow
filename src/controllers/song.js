@@ -37,15 +37,15 @@ const getSongs = async (req, res) => {
 
 const getUserSongs = async (req, res) => {
   try {
-    const user_id = req.params.id;
-    const userSongs = await fetchUserSongs(user_id);
-    if (userSongs.length == 0) return res.status(404).send("El usuario no tiene canciones");
+    const user_id = req.params.id
+    const userSongs = await fetchUserSongs(user_id)
+    if (userSongs.length == 0) return res.status(404).send("El usuario no tiene canciones")
     else {
-      res.status(201);
-      res.json(userSongs);
+      res.status(201)
+      res.json(userSongs)
     }
   } catch (error) {
-    handleError(res, 'ERROR_FETCHING_USER_SONGS');
+    handleError(res, 'ERROR_FETCHING_USER_SONGS')
   };
 };
 

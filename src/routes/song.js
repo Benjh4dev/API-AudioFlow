@@ -7,7 +7,7 @@ import { verifyAudioAndCoverArtFiles } from "../middlewares/verifyAudioandCoverA
 import { checkTypes } from "../middlewares/checkType.js"
 
 router.post('/:id', checkJwt, verifyUserId, verifyAudioAndCoverArtFiles, checkTypes , addSong)
-router.get('/:id', getUserSongs)
+router.get('/:id', checkJwt, getUserSongs)
 router.get('/', getSongs)
 
 export { router }
