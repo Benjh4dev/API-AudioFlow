@@ -134,7 +134,6 @@ const updateEmail = async (req, res) => {
 
         let hasErrors = !result.success
         const errorIssues = result.error ? [...result.error.issues] : []
-
         
         if(req.body.email) {
             const emailExists = await checkEmailForEdit(userId, req.body.email)
@@ -151,6 +150,7 @@ const updateEmail = async (req, res) => {
         
         const findUser = await getUserById(userId)
         if(req.body.password) {
+            console.log(req.body.password)
             const verifyCurrentPassword = await comparePassword(req.body.password, findUser.password)
             if (!verifyCurrentPassword) {
                 const currentPasswordError = {
