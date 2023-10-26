@@ -24,7 +24,7 @@ const insertSong = async ({ name, audio_file, cover_art, duration, artist, user_
     return songWithID
 }
 
-const getAllSongs = async () => {
+const fetchSongs = async () => {
     try {
       const songsCollection = db.collection("song");
       const snapshot = await songsCollection.get();
@@ -45,7 +45,30 @@ const getAllSongs = async () => {
       console.error("Error al obtener las canciones de la base de datos:", error);
       throw error;
     }
-  };
+};
+
+const fetchUserSongs = async (user_id) => {
+  try {
+    const songsCollection = db.collection("song");
+    const snapshot = await songsCollection.where("user_id", "==", user_id).get();
+
+    if (snapshot.empty) {
+      console.log("No se encontraron canciones del usuario.");
+      return [];
+    }
+
+    const userSongs = [];
+    snapshot.forEach(doc => {
+      userSongs.push({ id: doc.id, ...doc.data() });
+    });
+
+    console.log("Canciones del usuario recuperadas con éxito.");
+    return userSongs;
+  } catch (error) {
+    console.error("Error al obtener las canciones de la base de datos:", error);
+    throw error;
+  }
+};
   
 
-export { insertSong, getAllSongs }
+export { insertSong, fetchSongs, fetchUserSongs }
