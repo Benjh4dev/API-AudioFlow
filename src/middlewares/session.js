@@ -15,7 +15,7 @@ const checkJwt = async (req, res, next) => {
     } catch (error) {
         res.status(401)
         console.error(error)
-        res.send({message: "Invalid session"})
+        res.send({message: error.message})
     }
 }
 

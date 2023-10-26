@@ -6,7 +6,7 @@ const router = Router()
 import { verifyAudioAndCoverArtFiles } from "../middlewares/verifyAudioandCoverArtFile.js"
 import { checkTypes } from "../middlewares/checkType.js"
 
-router.post('/', verifyAudioAndCoverArtFiles, checkTypes ,addSong)
+router.post('/:id', checkJwt, verifyUserId, verifyAudioAndCoverArtFiles, checkTypes , addSong)
 router.get('/', getSongs)
 
 export { router }
