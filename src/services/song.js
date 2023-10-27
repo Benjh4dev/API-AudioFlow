@@ -70,5 +70,24 @@ const fetchUserSongs = async (user_id) => {
   }
 };
   
+const deleteById = async (user_id, song_id) => {
+  try {
+    const song = await db.collection('song').doc(song_id).get()
+    if(!song.exists) {
+      return {found : false, valid: false}
+    }
+    if(song.data().user_id != user_id) {
+      return {found: true, valid: false}
+    }
+    await db.collection('song').doc(song_id).delete()
+    return {found: true, valid: true}
+    
+  } catch (error) {
+    console.error("Error al eliminar la cancion de la base de datos:", error);
+    throw error;
+  }
+}
 
-export { insertSong, fetchSongs, fetchUserSongs }
+
+
+export { insertSong, fetchSongs, fetchUserSongs, deleteById }

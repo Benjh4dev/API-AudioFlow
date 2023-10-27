@@ -1,7 +1,7 @@
 import { validateSong } from "../models/song.js"
 import { z } from "zod"
 import { uploadToStorage } from "../utils/storageHandle.js"
-import { insertSong, fetchSongs, fetchUserSongs } from "../services/song.js"
+import { insertSong, fetchSongs, fetchUserSongs, deleteById } from "../services/song.js"
 import { handleError } from "../utils/errorHandle.js"
 
 const addSong = async (req, res) => {
@@ -49,4 +49,32 @@ const getUserSongs = async (req, res) => {
   };
 };
 
-export { addSong, getSongs, getUserSongs } 
+const deleteSong = async (req, res) => {
+  try {
+    
+    const song_id = req.params.id
+    const user_id = req.user.id 
+    const response = await deleteById(user_id, song_id)
+    console.log(response)
+    if(!response.found){
+      res.status(404)
+      res.send({message: "La canción no se encontró"})
+      return
+    }
+    if(!response.valid){
+      res.status(401)
+      res.send({message: "No tienes permiso para eliminar esta canción"})
+      return
+    }    
+    res.status(200)
+    res.send({message: "La canción se eliminó con éxito de id: " + song_id})
+
+    
+
+  } catch (error) {
+    console.log(error)
+    handleError(res, 'ERROR_DELETING_SONG')
+  }
+}
+
+export { addSong, getSongs, getUserSongs, deleteSong } 
