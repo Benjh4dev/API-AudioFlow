@@ -15,7 +15,7 @@ const login = async (req, res) => {
             res.status(401).json({ message: "Credenciales inválidas" })
             return
         }
-        res.status(200).json({ token: authResult.token, user: authResult.user })
+        res.status(200).json({ token: authResult.token, user: authResult.user, player: authResult.player })
 
     } catch (error) {
         handleError(res, 'ERROR_LOGIN')

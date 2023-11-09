@@ -5,7 +5,8 @@ import { validateUserEditionPassword } from '../models/userEdition.js';
 import { validateUserEmail } from '../models/userEmail.js';
 import { insertUser, removeUser, getUserById, verifyUsername, verifyEmail, updateProfilePic, updatePasswordService, updateEmailService, checkEmailForEdit } from '../services/user.js'
 import { comparePassword } from '../utils/passwordHandle.js';
-import { verifyType, uploadToStorage } from '../utils/imageHandle.js';
+import { verifyType} from '../utils/imageHandle.js';
+import { uploadToStorage } from '../utils/storageHandle.js';
 
 const getUser = async (req, res) => {
     try {
@@ -133,7 +134,6 @@ const updateEmail = async (req, res) => {
 
         let hasErrors = !result.success
         const errorIssues = result.error ? [...result.error.issues] : []
-
         
         if(req.body.email) {
             const emailExists = await checkEmailForEdit(userId, req.body.email)
@@ -148,6 +148,20 @@ const updateEmail = async (req, res) => {
             }
         }
         
+        const findUser = await getUserById(userId)
+        if(req.body.password) {
+            console.log(req.body.password)
+            const verifyCurrentPassword = await comparePassword(req.body.password, findUser.password)
+            if (!verifyCurrentPassword) {
+                const currentPasswordError = {
+                    code: z.ZodIssueCode.custom,
+                    path: ['password'],
+                    message: 'La contraseña actual es incorrecta'
+                };
+                errorIssues.push(currentPasswordError)
+                hasErrors = true;
+            }
+        }
         
         if (hasErrors) {
             res.status(400)
