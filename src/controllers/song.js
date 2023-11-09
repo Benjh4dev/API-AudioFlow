@@ -1,7 +1,7 @@
 import { validateSong } from "../models/song.js"
 import { z } from "zod"
 import { uploadToStorage } from "../utils/storageHandle.js"
-import { insertSong, fetchSongs, fetchUserSongs, deleteById, fetchSongswithQuery } from "../services/song.js"
+import { insertSong, fetchSongs, fetchUserSongs, deleteById } from "../services/song.js"
 import { handleError } from "../utils/errorHandle.js"
 
 const addSong = async (req, res) => {
@@ -24,25 +24,8 @@ const addSong = async (req, res) => {
 
 const getSongs = async (req, res) => {
   try {
-    const searchQuery = req.query.search
-    console.log(searchQuery)
-    if(!searchQuery || searchQuery == ""){
-      const songs = await fetchSongs()
-      res.status(200)
-      res.send({songs})
-      return
-    }
-
-    const songs = await fetchSongswithQuery(searchQuery)
-    
-    /*
-    const songs = await fetchSongs(searchQuery);
-    if (songs.length == 0) return res.status(404).send("No se encontraron canciones");
-    else {
-      res.status(200);
-      res.json(songs);
-    }
-    */
+    const songs = await fetchSongs()
+    console.log(songs)
     res.status(200)
     res.send({songs})
   } catch (error) {

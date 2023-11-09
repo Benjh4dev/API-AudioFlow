@@ -47,28 +47,6 @@ const fetchSongs = async () => {
     }
 };
 
-const fetchSongswithQuery = async (searchQuery) => {
-  try {
-    const query = searchQuery.toLowerCase();
-    const songsCollection = db.collection("song");
-    const snapshot = await songsCollection.get();
-    const songs = [];
-    snapshot.forEach(doc => {
-    const cancion = doc.data();
-    //FALTA POR ARTISTAAAAAAAAAAAAAAAAAAAAAAAAAA
-    if (cancion.name.toLowerCase().includes(query.toLowerCase()) || cancion.artist.toLowerCase().includes(query.toLowerCase())) {
-      songs.push({ id: doc.id, ...doc.data() });
-    }
-  })
-
-    console.log("Canciones recuperadas con éxito.");
-    return songs;
-  } catch (error) {
-    console.error("Error al obtener las canciones de la base de datos:", error);
-    throw error;
-  }
-}
-
 const fetchUserSongs = async (user_id) => {
   try {
     const songsCollection = db.collection("song");
@@ -112,4 +90,4 @@ const deleteById = async (user_id, song_id) => {
 
 
 
-export { insertSong, fetchSongs, fetchUserSongs, deleteById, fetchSongswithQuery }
+export { insertSong, fetchSongs, fetchUserSongs, deleteById }
