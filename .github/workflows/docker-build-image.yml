@@ -47,4 +47,4 @@ jobs:
         run: |
           docker build -t api:latest .
           echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
-          docker push api:latest
+          docker push $DOCKERHUB_USERNAME/api:latest
