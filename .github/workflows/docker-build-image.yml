@@ -15,17 +15,23 @@ jobs:
       PORT: ${{ secrets.PORT }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
       STORAGE_URL: ${{ secrets.STORAGE_URL }}
-      TEST: ${{ secrets.TEST_TEST }}
+      TEST_TEST: ${{ secrets.TEST_TEST }}
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Copy Firebase credentials
+        run: |
+          echo "${{ secrets.FIREBASE_CREDENTIALS }}" > /app/src/firebase/credentials.json
+
 
       - name: Create .env file
         run: |
           echo "PORT=${PORT}" > .env
           echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}" >> .env
           echo "STORAGE_URL=${STORAGE_URL}" >> .env
+          echo "TEST_TEST=${TEST_TEST}" >> .env
 
       - name: Build and Push Docker Image
         run: |
