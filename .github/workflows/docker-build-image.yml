@@ -22,11 +22,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Copy Firebase credentials
-        run: |
-          echo "${{ secrets.FIREBASE_CREDENTIALS }}" > credentials.json
-          mkdir -p /app/src/firebase/
-          mv credentials.json /app/src/firebase/
-
+        run: echo "${{ secrets.FIREBASE_CREDENTIALS }}" > credentials.json
 
       - name: Create .env file
         run: |

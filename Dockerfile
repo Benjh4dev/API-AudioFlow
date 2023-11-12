@@ -16,5 +16,7 @@ COPY . .
 # Exponer el puerto 3002
 EXPOSE 3002
 
+COPY credentials.json /app/src/firebase/
+
 # Comando para ejecutar la aplicación
 CMD ["npm", "run", "dev"]
