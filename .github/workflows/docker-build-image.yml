@@ -23,7 +23,9 @@ jobs:
 
       - name: Copy Firebase credentials
         run: |
-          echo "${{ secrets.FIREBASE_CREDENTIALS }}" > /app/src/firebase/credentials.json
+          echo "${{ secrets.FIREBASE_CREDENTIALS }}" > credentials.json
+          mkdir -p /app/src/firebase/
+          mv credentials.json /app/src/firebase/
 
 
       - name: Create .env file
