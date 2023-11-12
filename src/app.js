@@ -17,7 +17,8 @@ app.listen(port, () => {
 
 app.get('/', (req, res) => {
     res.json({ message: '¡Hola, mundo!' });
-  });
+});
+
 
 
 export default app
