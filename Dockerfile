@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Exponer el puerto 3002
-EXPOSE 3002
+EXPOSE 3001
 
 COPY credentials.json /app/src/firebase/
 
