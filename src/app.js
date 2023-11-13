@@ -16,7 +16,7 @@ app.listen(port, () => {
 })
 
 app.get('/', (req, res) => {
-    res.json({ message: '¡Hola, mundo!' });
+    res.json({ message: '¡Hola, mundo! x2'  });
 });
 
 
