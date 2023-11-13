@@ -1,0 +1,68 @@
+describe('Prueba de la API', () => {
+  it('Autenticar usuario', () => {
+    const userData = {
+      email: 'test5@test.com',
+      password: 'password'
+    };
+  
+    cy.request('POST', 'http://localhost:3002/api/auth', userData)
+    .then((loginResponse) => {
+      expect(loginResponse.status).to.eq(200);
+    })
+    .then((loginResponse) => {
+      const userId = loginResponse.body.user.id;
+      const token = loginResponse.body.token;
+      expect(userId).to.eq('Qyjlwd4rqWBdbsaDX34C');
+      //expect(token).to.eq('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlF5amx3ZDRycVdCZGJzYURYMzRDIiwiaWF0IjoxNjk5ODQ0NDQ3LCJleHAiOjE2OTk4NTE2NDd9.orrVdHJ2bT2-g0xwgiVfqx1gr2Xh-TFrKlqxpQP9S8w')
+      /*
+      cy.fixture('data/songtest.mp3').then((audioFile) => {
+        cy.fixture('data/imgtest.jpg').then((coverFile) => {
+          const formData = new FormData();
+            formData.append('name', 'Test Song');
+            formData.append('artist', 'Test Artist');
+            formData.append('audio_file', audioFile);
+            formData.append('cover_art', coverFile);
+
+            cy.request({
+                method: 'POST',
+                url: `http://localhost:3002/api/song/${userId}`,
+                formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`,
+                },
+            })
+            .its('status').should('equal', 201)
+
+        })
+      })
+      */
+
+      cy.readFile('cypress/fixtures/data/songtest.mp3', 'binary').then((audioFile) => {
+        cy.readFile('cypress/fixtures/data/imgtest.jpg', 'binary').then((coverFile) => {
+          const formData = new FormData();
+          formData.append('name', 'Test Song');
+          formData.append('artist', 'Test Artist');
+          formData.append('audio_file', { file: audioFile, encoding: 'binary' });
+          formData.append('cover_art', { file: coverFile, encoding: 'binary' });
+      
+          cy.request({
+            method: 'POST',
+            url: `http://localhost:3002/api/song/${userId}`,
+            formData,
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`,
+            },
+          })
+          .its('status').should('equal', 201);
+
+        });
+      });
+      
+    })
+    
+  });
+});
+
+

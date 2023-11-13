@@ -2,13 +2,12 @@ import { defineConfig } from "cypress";
 
 export default defineConfig({
   component: {
-    specPattern: "**/*.spec.js", 
+    specPattern: "src/test/**/*.spec.js", 
   },
   e2e: {
-    specPattern: "**/*.spec.js", 
+    specPattern: "src/test/**/*.spec.js", 
     setupNodeEvents(on, config) {
-      
+
     },
   },
 });
-
