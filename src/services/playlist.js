@@ -1,14 +1,12 @@
 import { db } from "../firebase/config.js"
 import { uploadToStorage } from "../utils/storageHandle.js"
 
-const insertPlaylist = async ({ name, cover_art,user_id, songs_counter, songs_ids }) => {
+const insertPlaylist = async ({ name, cover_art,user_id }) => {
     const coverURL = await uploadToStorage(cover_art)
     const playlist = {
         name,
         coverURL,
         user_id,
-        songs_counter,
-        songs_ids
     }
     const docRef = await db.collection('playlist').add(playlist)
     const playlistWithID = { id: docRef.id, ...playlist }
@@ -78,4 +76,4 @@ const deleteById = async (user_id, playlist_id) => {
     }
 }
   
-export { insertPlaylist, fetchPlaylist, }
+export { insertPlaylist, fetchPlaylist, deleteById, fetchUserPlaylist }
