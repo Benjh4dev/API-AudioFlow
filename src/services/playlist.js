@@ -1,30 +1,81 @@
 import { db } from "../firebase/config.js"
 import { uploadToStorage } from "../utils/storageHandle.js"
 
-const insertSong = async ({ name, audio_file, cover_art, duration, artist, user_id }) => {
-    console.log(audio_file , cover_art)
-    const [coverURL, audioURL] = await Promise.all([
-        uploadToStorage(cover_art),
-        uploadToStorage(audio_file)
-    ])
-
-    const song = {
-        user_id,
+const insertPlaylist = async ({ name, cover_art,user_id, songs_counter, songs_ids }) => {
+    const coverURL = await uploadToStorage(cover_art)
+    const playlist = {
         name,
         coverURL,
-        audioURL,
-        artist,
-        duration
+        user_id,
+        songs_counter,
+        songs_ids
     }
-
-    const docRef = await db.collection('song').add(song)
-    const songWithID = { id: docRef.id, ...song }
-
-    console.log("Canción agregada con ID: ", docRef.id)
-    return songWithID
+    const docRef = await db.collection('playlist').add(playlist)
+    const playlistWithID = { id: docRef.id, ...playlist }
+    console.log("Playlist agregada con ID: ", docRef.id)
+    return playlistWithID
 }
 
+const fetchPlaylist = async () => { 
+    try{
+        const playlistCollection = db.collection("playlist");
+        const snapshot = await playlistCollection.get();
 
+        if(snapshot.empty){
+            console.log("No se encontraron playlists.");
+            return [];
+        }
+        const playlists = [];
+        snapshot.forEach(doc => {
+            playlists.push({ id: doc.id, ...doc.data() });
+        });
+        console.log("Playlists recuperadas con éxito.");
+        return playlists;
+    } catch (error) {
+        console.error("Error al obtener las playlist de la base de datos:", error);
+        throw error;
+      }
+}
 
+const fetchUserPlaylist = async (user_id) => {
+    try {
+        const playlistCollection = db.collection("playlist");
+        const snapshot = await playlistCollection.where("user_id", "==", user_id).get();
 
-export { insertSong }
+        if (snapshot.empty) {
+            console.log("No se encontraron playlists del usuario.");
+            return [];
+        }
+
+        const userPlaylists = [];
+        snapshot.forEach(doc => {
+            userPlaylists.push({ id: doc.id, ...doc.data() });
+        });
+
+        console.log("Playlists del usuario recuperadas con éxito.");
+        return userPlaylists;
+    } catch (error) {
+        console.error("Error al obtener las playlist de la base de datos:", error);
+        throw error;
+    
+    }
+ }
+
+const deleteById = async (user_id, playlist_id) => {
+    try {
+        const playlist = await db.collection('playlist').doc(playlist_id).get()
+        if(!playlist.exists) {
+            return {found : false, valid: false}
+        }
+        if (playlist.data().user_id != user_id) {
+            return {found: true, valid: false}
+        }
+        await db.collection('playlist').doc(playlist_id).delete()
+
+    } catch (error) {
+        console.error("Error al eliminar la playlist de la base de datos:", error);
+        throw error;
+    }
+}
+  
+export { insertPlaylist, fetchPlaylist, }
