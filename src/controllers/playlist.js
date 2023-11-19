@@ -7,7 +7,9 @@ import { handleError } from "../utils/errorHandle.js"
 const addPlaylist = async (req, res) => {
     try {
         const { name } = req.body
+        //falta hacer la comporbación del name, usando el validatePlaylist
         const user_id = req.params.id
+        //la playlist solo contiene el nombre, sin covert_art
         const covert_art = req.files['cover_art'][0]
         console.log(name, covert_art)
 

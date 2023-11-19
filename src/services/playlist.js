@@ -1,8 +1,10 @@
 import { db } from "../firebase/config.js"
 import { uploadToStorage } from "../utils/storageHandle.js"
 
-const insertPlaylist = async ({ name, cover_art,user_id }) => {
+const insertPlaylist = async ({ name, cover_art, user_id }) => {
+    //no se sube al storage, ya que no contiene el cover_art la playlist
     const coverURL = await uploadToStorage(cover_art)
+    //la playlist no contiene el cover_art, solo el nombre
     const playlist = {
         name,
         coverURL,
@@ -39,7 +41,6 @@ const fetchUserPlaylist = async (user_id) => {
     try {
         const playlistCollection = db.collection("playlist");
         const snapshot = await playlistCollection.where("user_id", "==", user_id).get();
-
         if (snapshot.empty) {
             console.log("No se encontraron playlists del usuario.");
             return [];
