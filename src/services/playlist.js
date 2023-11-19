@@ -3,12 +3,10 @@ import { uploadToStorage } from "../utils/storageHandle.js"
 
 const insertPlaylist = async ({ name, cover_art, user_id }) => {
     //no se sube al storage, ya que no contiene el cover_art la playlist
-    const coverURL = await uploadToStorage(cover_art)
     //la playlist no contiene el cover_art, solo el nombre
     const playlist = {
         name,
-        coverURL,
-        user_id,
+        user_id
     }
     const docRef = await db.collection('playlist').add(playlist)
     const playlistWithID = { id: docRef.id, ...playlist }
