@@ -4,18 +4,28 @@ import { uploadToStorage } from "../utils/storageHandle.js"
 import { insertPlaylist, fetchPlaylist, fetchUserPlaylist } from "../services/playlist.js"
 import { handleError } from "../utils/errorHandle.js"
 
+
 const addPlaylist = async (req, res) => {
     try {
+
         const { name } = req.body
-        //falta hacer la comprobación del name, usando el validatePlaylist
         const user_id = req.params.id
-        //la playlist solo contiene el nombre, sin covert_art
+
+        const result = validatePlaylist(req.body)
+        let hasErrors = !result.success
+        const errorIssues = result.error ? [...result.error.issues] : []
+        if (hasErrors) {
+            res.status(400)
+            res.send({ message: 'El nombre de la playlist no es válido' });
+            return
+        }
 
         const playlist = await insertPlaylist({ name, user_id })
         res.status(201)
         res.json({ playlist })
 
     } catch (error) {  
+        console.log(error)
         handleError(res, 'ERROR_ADD_PLAYLIST')
     }
 }
