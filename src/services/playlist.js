@@ -1,7 +1,7 @@
 import { db } from "../firebase/config.js"
 import { uploadToStorage } from "../utils/storageHandle.js"
 
-const insertPlaylist = async ({ name, cover_art, user_id }) => {
+const insertPlaylist = async ({ name, user_id }) => {
     //no se sube al storage, ya que no contiene el cover_art la playlist
     //la playlist no contiene el cover_art, solo el nombre
     const playlist = {
