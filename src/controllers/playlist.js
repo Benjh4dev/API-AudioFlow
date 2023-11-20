@@ -16,7 +16,7 @@ const addPlaylist = async (req, res) => {
         const errorIssues = result.error ? [...result.error.issues] : []
         if (hasErrors) {
             res.status(400)
-            res.send({ message: 'El nombre de la playlist no es válido' });
+            res.send(result.error);
             return
         }
 
