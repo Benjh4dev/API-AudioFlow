@@ -3,7 +3,8 @@ import { db } from "../firebase/config.js"
 const insertPlaylist = async ({ name, user_id }) => {
     const playlist = {
         name,
-        user_id
+        user_id,
+        timestamp: new Date(),
     }
     const docRef = await db.collection('playlist').add(playlist)
     const playlistWithID = { id: docRef.id, ...playlist }
