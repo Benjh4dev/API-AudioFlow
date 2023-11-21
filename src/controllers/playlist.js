@@ -1,7 +1,6 @@
-import { validatePlaylist } from "../models/playlist.js"
 import { z } from "zod"
-import { uploadToStorage } from "../utils/storageHandle.js"
-import { insertPlaylist, fetchPlaylist, fetchUserPlaylist } from "../services/playlist.js"
+import { validatePlaylist } from "../models/playlist.js"
+import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById } from "../services/playlist.js"
 import { handleError } from "../utils/errorHandle.js"
 
 
@@ -30,30 +29,30 @@ const addPlaylist = async (req, res) => {
     }
 }
 
-const getPlaylist = async (req, res) => {
+const getPlaylists = async (req, res) => {
     try {   
-        const playlist = await fetchPlaylist()
-        console.log(playlist)
+        const playlists = await fetchPlaylists()
+        console.log(playlists)
         res.status(200)
-        res.send({ playlist }) 
+        res.send({ playlists }) 
 
     } catch (error) {
         console.log(error)
-        handleError(res, 'ERROR_FETCHING_PLAYLIST');
+        handleError(res, 'ERROR_FETCHING_PLAYLISTS');
     }
 }
 
-const getUserPlaylist = async (req, res) => {
+const getUserPlaylists = async (req, res) => {
     try {
         const user_id = req.params.id
-        const userPlaylist = await fetchUserPlaylist(user_id)
-        if (userPlaylist.length == 0) return res.status(404).send("El usuario no tiene playlist")
+        const userPlaylists = await fetchUserPlaylists(user_id)
+        if (userPlaylists.length == 0) return res.status(404).send("El usuario no tiene playlist")
         else {
             res.status(201)
-            res.json(userPlaylist)
+            res.json(userPlaylists)
         }
     } catch (error) {
-        handleError(res, 'ERROR_FETCHING_USER_PLAYLIST')
+        handleError(res, 'ERROR_FETCHING_USER_PLAYLISTS')
     }
  }
 
@@ -81,4 +80,4 @@ const getUserPlaylist = async (req, res) => {
     }
  }
 
-export { addPlaylist, getPlaylist, getUserPlaylist, deletePlaylist }
+export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist }

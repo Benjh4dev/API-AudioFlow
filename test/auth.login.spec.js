@@ -2,8 +2,8 @@ describe('Prueba de la API', () => {
   it('Debería crear un usuario y luego autenticarlo', () => {
     const userData = {
       username: 'testUser4',
-      email: 'test4@test.com',
-      password: 'password'
+      email: 'cypress@test.cy',
+      password: 'cypresspassword'
     };
   
     cy.request('POST', 'http://localhost:3002/api/user', userData)

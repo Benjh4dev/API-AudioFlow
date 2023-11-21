@@ -1,9 +1,6 @@
 import { db } from "../firebase/config.js"
-import { uploadToStorage } from "../utils/storageHandle.js"
 
 const insertPlaylist = async ({ name, user_id }) => {
-    //no se sube al storage, ya que no contiene el cover_art la playlist
-    //la playlist no contiene el cover_art, solo el nombre
     const playlist = {
         name,
         user_id
@@ -14,7 +11,7 @@ const insertPlaylist = async ({ name, user_id }) => {
     return playlistWithID
 }
 
-const fetchPlaylist = async () => { 
+const fetchPlaylists = async () => { 
     try{
         const playlistCollection = db.collection("playlist");
         const snapshot = await playlistCollection.get();
@@ -35,7 +32,7 @@ const fetchPlaylist = async () => {
       }
 }
 
-const fetchUserPlaylist = async (user_id) => {
+const fetchUserPlaylists = async (user_id) => {
     try {
         const playlistCollection = db.collection("playlist");
         const snapshot = await playlistCollection.where("user_id", "==", user_id).get();
@@ -68,6 +65,7 @@ const deleteById = async (user_id, playlist_id) => {
             return {found: true, valid: false}
         }
         await db.collection('playlist').doc(playlist_id).delete()
+        return {found: true, valid: true}
 
     } catch (error) {
         console.error("Error al eliminar la playlist de la base de datos:", error);
@@ -75,4 +73,4 @@ const deleteById = async (user_id, playlist_id) => {
     }
 }
   
-export { insertPlaylist, fetchPlaylist, deleteById, fetchUserPlaylist }
+export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists }
