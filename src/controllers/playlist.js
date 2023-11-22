@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { validatePlaylist } from "../models/playlist.js"
-import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById } from "../services/playlist.js"
+import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist } from "../services/playlist.js"
 import { handleError } from "../utils/errorHandle.js"
 
 
@@ -54,9 +54,9 @@ const getUserPlaylists = async (req, res) => {
     } catch (error) {
         handleError(res, 'ERROR_FETCHING_USER_PLAYLISTS')
     }
- }
+}
 
- const deletePlaylist = async (req, res) => {
+const deletePlaylist = async (req, res) => {
     try {
         const playlist_id = req.params.id
         const user_id = req.user.id
@@ -78,6 +78,31 @@ const getUserPlaylists = async (req, res) => {
         console.error(error);
         handleError(res, 'ERROR_DELETING_PLAYLIST')
     }
- }
+}
 
-export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist }
+const addSongToPlaylist = async (req, res) => {
+    try {
+        const playlist_id = req.params.playlistId
+        const song_id = req.params.songId
+        const song = req.song
+        console.log(song)
+        const response = await addSongToAPlaylist(playlist_id, song_id, song)
+        if(response.valid){
+            res.status(201)
+            res.send({message: "La cancion se agregó a la playlist"})
+            return
+        }
+        res.status(400)
+        res.send({message: "Ocurrió un error al agregar la cancion a la playlist"})
+
+        
+    } catch (error) {
+        console.error(error);
+        handleError(res, 'ERROR_DELETING_PLAYLIST')
+    }
+}
+
+
+
+
+export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist }
