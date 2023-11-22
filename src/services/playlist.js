@@ -73,5 +73,34 @@ const deleteById = async (user_id, playlist_id) => {
         throw error;
     }
 }
-  
-export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists }
+
+const addSongToAPlaylist = async (playlist_id, song_id, song) => {
+    try {
+        console.log(playlist_id, song_id, song)
+        const playlistRef = db.collection('playlist').doc(playlist_id)
+        await playlistRef.collection('songs').doc(song_id).set(song)
+        return {valid: true}
+
+    } catch (error) {
+        console.error("Error al agregar canción a la playlist:", error);
+        throw error;
+    }
+}
+
+
+const getPlaylistById = async (playlist_id) => {
+    try {
+        const playlist = await db.collection('playlist').doc(playlist_id).get()
+        if (playlist.exists) {
+            return { found: true}
+        } else {
+            console.log("Playlist not found.")
+            return { found: false}
+        }
+    } catch (error) {
+        console.error("Error retrieving playlist from the database:", error)
+        throw error
+    }
+}
+
+export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist }
