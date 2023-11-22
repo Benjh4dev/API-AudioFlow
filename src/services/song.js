@@ -88,6 +88,19 @@ const deleteById = async (user_id, song_id) => {
   }
 }
 
+const getById = async (song_id) => {
+  try {
+    const song = await db.collection('song').doc(song_id).get()
+    if (!song.exists) {
+      return { found: false }
+    }
+    return { found: true, song: song.data() }
+  } catch (error) {
+    console.error("Error al obtener la canción de la base de datos:", error);
+    throw error;
+  }
+}
 
 
-export { insertSong, fetchSongs, fetchUserSongs, deleteById }
+
+export { insertSong, fetchSongs, fetchUserSongs, deleteById, getById }
