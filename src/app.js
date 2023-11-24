@@ -3,6 +3,7 @@ import cors from 'cors'
 import "dotenv/config"
 import {router} from "../src/routes/index.js"
 import { corsMiddleware } from './middlewares/cors.js'
+import { cascadeDelete } from './utils/cascadeDeleteHandle.js'
 
 const app = express()
 
@@ -17,8 +18,8 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
 
-app.get('/', (req, res) => {
-    res.json({ message: '¡Hola, mundo! x3'  });
+app.get('/', async (req, res) => {
+    res.send( "Welcome to Audiflow API"  );
 });
 
 

@@ -14,5 +14,5 @@ router.get('/:id', checkJwt, getUserPlaylists)
 router.get('/', getPlaylists)
 //el delete no se implementará, en caso de implementarse, se debe usar el checkJwt y el verifyUserId
 router.delete('/:id', checkJwt, deletePlaylist)
-router.post('/:playlistId/:songId', checkJwt, verifyUserId, verifyPlaylistId, verifySongId, addSongToPlaylist)
+router.post('/:playlistId/:songId', checkJwt, verifyPlaylistId, verifySongId, addSongToPlaylist)
 export { router }

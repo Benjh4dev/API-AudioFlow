@@ -76,7 +76,7 @@ const deleteById = async (user_id, playlist_id) => {
 
 const addSongToAPlaylist = async (playlist_id, song_id, song) => {
     try {
-        console.log(playlist_id, song_id, song)
+        //console.log(playlist_id, song_id, song)
         const playlistRef = db.collection('playlist').doc(playlist_id)
         await playlistRef.collection('songs').doc(song_id).set(song)
         return {valid: true}

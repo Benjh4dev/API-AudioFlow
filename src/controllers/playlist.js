@@ -85,7 +85,6 @@ const addSongToPlaylist = async (req, res) => {
         const playlist_id = req.params.playlistId
         const song_id = req.params.songId
         const song = req.song
-        console.log(song)
         const response = await addSongToAPlaylist(playlist_id, song_id, song)
         if(response.valid){
             res.status(201)
