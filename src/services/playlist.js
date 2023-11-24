@@ -103,4 +103,39 @@ const getPlaylistById = async (playlist_id) => {
     }
 }
 
-export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist }
+const returnPlaylistSongs = async (playlist_id) => {
+    try {
+        const playlistSnapshot = await db.collection('playlist').doc(playlist_id).get()
+
+        if (playlistSnapshot.exists) {
+            const playlistData = playlistSnapshot.data()
+
+            const playlistName = playlistData.name
+
+            const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').get();
+            const songsArray = []
+
+            songsSnapshot.forEach((songDoc) => {
+                const songData = songDoc.data()
+                songsArray.push({ id: songDoc.id, ...songData
+                });
+            });
+
+            return {
+                found: true,
+                playlist: {
+                    name: playlistName,
+                    songs: songsArray
+                }
+            };
+        } else {
+            console.log("Playlist not found.")
+            return { found: false }
+        }
+    } catch (error) {
+        console.error("Error retrieving playlist from the database:", error)
+        throw error
+    }
+}
+
+export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist, returnPlaylistSongs }

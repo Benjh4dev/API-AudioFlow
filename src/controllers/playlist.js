@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { validatePlaylist } from "../models/playlist.js"
-import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist } from "../services/playlist.js"
+import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist, returnPlaylistSongs } from "../services/playlist.js"
 import { handleError } from "../utils/errorHandle.js"
 
 
@@ -46,11 +46,9 @@ const getUserPlaylists = async (req, res) => {
     try {
         const user_id = req.params.id
         const userPlaylists = await fetchUserPlaylists(user_id)
-        if (userPlaylists.length == 0) return res.status(404).send("El usuario no tiene playlist")
-        else {
-            res.status(201)
-            res.json(userPlaylists)
-        }
+        
+        res.status(200)    
+        res.json( userPlaylists )
     } catch (error) {
         handleError(res, 'ERROR_FETCHING_USER_PLAYLISTS')
     }
@@ -101,7 +99,18 @@ const addSongToPlaylist = async (req, res) => {
     }
 }
 
+const getPlaylistDetail = async (req, res) => {
+    try {
+        //FALTA TODO PROCESO DE VALIDACIÓN
+        const playlist_id = req.params.playlistId
+        const playlist = await returnPlaylistSongs(playlist_id)
+        res.status(200)
+        res.send({playlist})
+    } catch (error) {
+        handleError(res, 'ERROR_FETCHING_PLAYLIST_DETAIL')
+    }
+}
 
 
 
-export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist }
+export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylistDetail }
