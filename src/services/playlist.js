@@ -1,9 +1,13 @@
 import { db } from "../firebase/config.js"
 
 const insertPlaylist = async ({ name, user_id }) => {
+    const userDoc = await db.collection('user').doc(user_id).get()
+
     const playlist = {
         name,
         user_id,
+        username: userDoc.data().username,
+        image: '',
         timestamp: new Date(),
     }
     const docRef = await db.collection('playlist').add(playlist)
@@ -85,32 +89,16 @@ const addSongToAPlaylist = async (playlist_id, song_id, song) => {
         console.error("Error al agregar canción a la playlist:", error);
         throw error;
     }
-}
-
+};
 
 const getPlaylistById = async (playlist_id) => {
-    try {
-        const playlist = await db.collection('playlist').doc(playlist_id).get()
-        if (playlist.exists) {
-            return { found: true}
-        } else {
-            console.log("Playlist not found.")
-            return { found: false}
-        }
-    } catch (error) {
-        console.error("Error retrieving playlist from the database:", error)
-        throw error
-    }
-}
-
-const returnPlaylistSongs = async (playlist_id) => {
     try {
         const playlistSnapshot = await db.collection('playlist').doc(playlist_id).get()
 
         if (playlistSnapshot.exists) {
             const playlistData = playlistSnapshot.data()
 
-            const playlistName = playlistData.name
+            //const playlistName = playlistData.name
 
             const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').get();
             const songsArray = []
@@ -124,7 +112,7 @@ const returnPlaylistSongs = async (playlist_id) => {
             return {
                 found: true,
                 playlist: {
-                    name: playlistName,
+                    ...playlistData,
                     songs: songsArray
                 }
             };
@@ -136,6 +124,6 @@ const returnPlaylistSongs = async (playlist_id) => {
         console.error("Error retrieving playlist from the database:", error)
         throw error
     }
-}
+};
 
-export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist, returnPlaylistSongs }
+export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist }

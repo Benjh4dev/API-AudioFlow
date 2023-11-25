@@ -3,7 +3,6 @@ import cors from 'cors'
 import "dotenv/config"
 import {router} from "../src/routes/index.js"
 import { corsMiddleware } from './middlewares/cors.js'
-import { returnPlaylistSongs } from './services/playlist.js'
 
 const app = express()
 
@@ -20,11 +19,8 @@ app.listen(port, () => {
 })
 
 app.get('/', async (req, res) => {
-    const songs = await returnPlaylistSongs("D4zyUkSRrDjyFffpXN3p")
     //res.send( "Welcome to Audiflow API"  );
     res.send(songs)
 });
-
-
 
 export default app

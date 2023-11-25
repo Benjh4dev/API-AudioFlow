@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { validatePlaylist } from "../models/playlist.js"
-import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist, returnPlaylistSongs } from "../services/playlist.js"
+import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist } from "../services/playlist.js"
 import { handleError } from "../utils/errorHandle.js"
 
 
@@ -99,18 +99,15 @@ const addSongToPlaylist = async (req, res) => {
     }
 }
 
-const getPlaylistDetail = async (req, res) => {
+const getPlaylist = async (req, res) => {
     try {
-        //FALTA TODO PROCESO DE VALIDACIÓN
         const playlist_id = req.params.playlistId
-        const playlist = await returnPlaylistSongs(playlist_id)
+        const playlist = await getPlaylistById(playlist_id)
         res.status(200)
         res.send({playlist})
     } catch (error) {
-        handleError(res, 'ERROR_FETCHING_PLAYLIST_DETAIL')
+        handleError(res, 'ERROR_FETCHING_PLAYLIST')
     }
-}
+};
 
-
-
-export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylistDetail }
+export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylist }
