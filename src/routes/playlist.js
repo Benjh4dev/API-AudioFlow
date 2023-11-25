@@ -11,9 +11,11 @@ router.post('/:id', checkJwt, verifyUserId, addPlaylist)
 router.delete('/:id', checkJwt, deletePlaylist, verifyUserId)
 
 router.get('/', getPlaylists)
-router.get('/:playlistId', getPlaylist)
+
+router.get('/:playlistId', verifyPlaylistId, getPlaylist)
 router.get('/user/:id', checkJwt, getUserPlaylists)
 
+//VerifyPlaylist y verifySongId validar que la id del usuario sea el del token
 router.post('/:playlistId/:songId', checkJwt, verifyPlaylistId, verifySongId, addSongToPlaylist)
 
 export { router }

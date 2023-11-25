@@ -98,8 +98,6 @@ const getPlaylistById = async (playlist_id) => {
         if (playlistSnapshot.exists) {
             const playlistData = playlistSnapshot.data()
 
-            //const playlistName = playlistData.name
-
             const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').get();
             const songsArray = []
 
