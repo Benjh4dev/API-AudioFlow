@@ -100,14 +100,11 @@ const addSongToAPlaylist = async (playlist_id, song_id, song) => {
     }
 };
 
-const getPlaylistById = async (playlist_id, userId) => {
+const getPlaylistById = async (playlist_id) => {
     try {
         const playlistSnapshot = await db.collection('playlist').doc(playlist_id).get()
 
         if (playlistSnapshot.exists) {
-            if(playlistSnapshot.data().user_id != userId) {
-                return { found: true, valid: false }
-            }
             const playlistData = playlistSnapshot.data()
 
             const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').get();
@@ -137,4 +134,18 @@ const getPlaylistById = async (playlist_id, userId) => {
     }
 };
 
-export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist }
+const validPlaylist = async (playlist_id) => {
+    try {
+        const playlistSnapshot = await db.collection('playlist').doc(playlist_id).get()
+        if (playlistSnapshot.exists) {
+            return true
+        } else {
+            return false
+        }
+    } catch (error) {
+        console.error("Error retrieving playlist from the database:", error)
+        throw error
+    }
+}
+
+export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist, validPlaylist }

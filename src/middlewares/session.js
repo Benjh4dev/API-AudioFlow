@@ -2,6 +2,7 @@ import { verifyToken } from "../utils/jwtHandle.js"
 
 const checkJwt = async (req, res, next) => {
     try {
+        console.log('lol')
         const bearerToken = req.headers.authorization || ""
         if(bearerToken == "") {
             res.status(401)
@@ -15,6 +16,7 @@ const checkJwt = async (req, res, next) => {
             res.send({message: "Invalid token"})
             return
         }
+        console.log('lol')
         req.user = decoded
         next()
         
