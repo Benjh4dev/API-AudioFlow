@@ -69,6 +69,10 @@ const deleteById = async (user_id, playlist_id) => {
         if (playlist.data().user_id != user_id) {
             return {found: true, valid: false}
         }
+        const songs = await playlist.ref.collection('songs').get()
+        if(!songs.empty) {
+            await Promise.all(songs.docs.map(songDoc => songDoc.ref.delete()))
+        }
         await db.collection('playlist').doc(playlist_id).delete()
         return {found: true, valid: true}
 
@@ -82,8 +86,13 @@ const addSongToAPlaylist = async (playlist_id, song_id, song) => {
     try {
         //console.log(playlist_id, song_id, song)
         const playlistRef = db.collection('playlist').doc(playlist_id)
+        //await playlistRef.collection('songs').doc(song_id).set(song)
+        const verify = await playlistRef.collection('songs').doc(song_id).get()
+        if(verify.exists) {
+            return {alreadyExit: true, valid: true}
+        }
         await playlistRef.collection('songs').doc(song_id).set(song)
-        return {valid: true}
+        return {valid: true, alreadyExit: false}
 
     } catch (error) {
         console.error("Error al agregar canción a la playlist:", error);
@@ -91,11 +100,14 @@ const addSongToAPlaylist = async (playlist_id, song_id, song) => {
     }
 };
 
-const getPlaylistById = async (playlist_id) => {
+const getPlaylistById = async (playlist_id, userId) => {
     try {
         const playlistSnapshot = await db.collection('playlist').doc(playlist_id).get()
 
         if (playlistSnapshot.exists) {
+            if(playlistSnapshot.data().user_id != userId) {
+                return { found: true, valid: false }
+            }
             const playlistData = playlistSnapshot.data()
 
             const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').get();
@@ -112,11 +124,12 @@ const getPlaylistById = async (playlist_id) => {
                 playlist: {
                     ...playlistData,
                     songs: songsArray
-                }
+                },
+                valid: true
             };
         } else {
             console.log("Playlist not found.")
-            return { found: false }
+            return { found: false, valid: false }
         }
     } catch (error) {
         console.error("Error retrieving playlist from the database:", error)
