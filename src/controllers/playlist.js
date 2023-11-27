@@ -84,6 +84,12 @@ const addSongToPlaylist = async (req, res) => {
         const song_id = req.params.songId
         const song = req.song
         const response = await addSongToAPlaylist(playlist_id, song_id, song)
+        if(response.alreadyExit){
+            res.status(400)
+            res.send({message: "La cancion ya se encuentra en la playlist"})
+            return
+        }
+        
         if(response.valid){
             res.status(201)
             res.send({message: "La cancion se agregó a la playlist"})
