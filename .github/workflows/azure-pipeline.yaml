@@ -43,3 +43,8 @@ jobs:
 
     - name: Push Docker image to Azure Container Registry
       run: docker push audioflow.azurecr.io/api-audioflow:latest
+
+    - name: Restart Azure App Service
+      run: |
+        az login --service-principal -u ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }} -p ${{ secrets.AZURE_SERVICE_PRINCIPAL_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        az webapp restart --name api-audioflow --resource-group Audioflow
