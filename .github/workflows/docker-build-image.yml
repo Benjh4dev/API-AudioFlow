@@ -45,7 +45,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t api .
           echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
-          docker tag api $DOCKERHUB_USERNAME/api:latest
-          docker push $DOCKERHUB_USERNAME/api:latest
+          docker build -t api:latest .
+          docker tag api:latest $DOCKERHUB_USERNAME/api-audioflow:latest
+          docker push $DOCKERHUB_USERNAME/api-audioflow:latest
