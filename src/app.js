@@ -16,7 +16,7 @@ app.listen(port, () => {
 })
 
 app.get('/', (req, res) => {
-    res.json({ message: '¡Hola, mundo! desde github workflows!'  });
+    res.json({ message: '¡Hola, mundo! desde github workflows v2!'  });
 });
 
 
