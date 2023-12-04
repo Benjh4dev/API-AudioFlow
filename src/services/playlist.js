@@ -1,4 +1,6 @@
 import { db } from "../firebase/config.js"
+import admin from 'firebase-admin'
+import { formatTimestamp } from "../utils/dateFormation.js"
 
 const insertPlaylist = async ({ name, user_id }) => {
     const userDoc = await db.collection('user').doc(user_id).get()
@@ -16,12 +18,12 @@ const insertPlaylist = async ({ name, user_id }) => {
     return playlistWithID
 }
 
-const fetchPlaylists = async () => { 
-    try{
+const fetchPlaylists = async () => {
+    try {
         const playlistCollection = db.collection("playlist");
         const snapshot = await playlistCollection.get();
 
-        if(snapshot.empty){
+        if (snapshot.empty) {
             console.log("No se encontraron playlists.");
             return [];
         }
@@ -34,7 +36,7 @@ const fetchPlaylists = async () => {
     } catch (error) {
         console.error("Error al obtener las playlist de la base de datos:", error);
         throw error;
-      }
+    }
 }
 
 const fetchUserPlaylists = async (user_id) => {
@@ -56,25 +58,25 @@ const fetchUserPlaylists = async (user_id) => {
     } catch (error) {
         console.error("Error al obtener las playlist de la base de datos:", error);
         throw error;
-    
+
     }
- }
+}
 
 const deleteById = async (user_id, playlist_id) => {
     try {
         const playlist = await db.collection('playlist').doc(playlist_id).get()
-        if(!playlist.exists) {
-            return {found : false, valid: false}
+        if (!playlist.exists) {
+            return { found: false, valid: false }
         }
         if (playlist.data().user_id != user_id) {
-            return {found: true, valid: false}
+            return { found: true, valid: false }
         }
         const songs = await playlist.ref.collection('songs').get()
-        if(!songs.empty) {
+        if (!songs.empty) {
             await Promise.all(songs.docs.map(songDoc => songDoc.ref.delete()))
         }
         await db.collection('playlist').doc(playlist_id).delete()
-        return {found: true, valid: true}
+        return { found: true, valid: true }
 
     } catch (error) {
         console.error("Error al eliminar la playlist de la base de datos:", error);
@@ -84,15 +86,19 @@ const deleteById = async (user_id, playlist_id) => {
 
 const addSongToAPlaylist = async (playlist_id, song_id, song) => {
     try {
-        //console.log(playlist_id, song_id, song)
         const playlistRef = db.collection('playlist').doc(playlist_id)
-        //await playlistRef.collection('songs').doc(song_id).set(song)
         const verify = await playlistRef.collection('songs').doc(song_id).get()
-        if(verify.exists) {
-            return {alreadyExit: true, valid: true}
+        if (verify.exists) {
+            return { alreadyExit: true, valid: true }
         }
-        await playlistRef.collection('songs').doc(song_id).set(song)
-        return {valid: true, alreadyExit: false}
+        else {
+            const fullSong = {
+                ...song,
+                addedAt: admin.firestore.FieldValue.serverTimestamp()
+            }
+            await playlistRef.collection('songs').doc(song_id).set(fullSong)
+            return { valid: true, alreadyExit: false }
+        }
 
     } catch (error) {
         console.error("Error al agregar canción a la playlist:", error);
@@ -107,12 +113,16 @@ const getPlaylistById = async (playlist_id) => {
         if (playlistSnapshot.exists) {
             const playlistData = playlistSnapshot.data()
 
-            const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').get();
+            const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').orderBy('addedAt', 'asc').get();
             const songsArray = []
 
             songsSnapshot.forEach((songDoc) => {
                 const songData = songDoc.data()
-                songsArray.push({ id: songDoc.id, ...songData
+                const formattedDate = formatTimestamp(songData.addedAt);
+                songsArray.push({
+                    id: songDoc.id,
+                    ...songData,
+                    addedAt: formattedDate 
                 });
             });
 

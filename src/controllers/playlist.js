@@ -110,7 +110,7 @@ const getPlaylist = async (req, res) => {
         const playlist_id = req.params.playlistId
         const playlist = await getPlaylistById(playlist_id)
         res.status(200)
-        res.send({playlist})
+        res.json(playlist)
     } catch (error) {
         handleError(res, 'ERROR_FETCHING_PLAYLIST')
     }
