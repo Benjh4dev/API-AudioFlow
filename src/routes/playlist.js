@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { checkJwt } from "../middlewares/session.js"
 import { verifyUserId } from "../middlewares/verifyUserId.js"
-import { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylist } from "../controllers/playlist.js";
+import { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylist, deleteSongToPlaylist } from "../controllers/playlist.js";
 import { verifyPlaylistId } from "../middlewares/verifyPlaylistId.js";
 import { verifyPlaylistIdToken } from "../middlewares/verifyPlaylistIdToken.js";
 import { verifySongId } from "../middlewares/verifySongId.js";
@@ -16,7 +16,9 @@ router.get('/', getPlaylists)
 router.get('/:playlistId', getPlaylist)
 router.get('/user/:id', checkJwt, getUserPlaylists)
 
-//VerifyPlaylist y verifySongId validar que la id del usuario sea el del token
+//RUTA AGREGAR CANCIÓN A PLAYLIST
 router.post('/:playlistId/:songId', checkJwt, verifyPlaylistIdToken, verifySongId, addSongToPlaylist)
+//RUTA ELIMINAR CANCIÓN DE PLAYLIST
+router.delete('/:playlistId/:songId', checkJwt, verifyPlaylistIdToken, deleteSongToPlaylist)
 
 export { router }

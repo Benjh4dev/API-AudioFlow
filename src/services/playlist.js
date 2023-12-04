@@ -106,34 +106,60 @@ const addSongToAPlaylist = async (playlist_id, song_id, song) => {
     }
 };
 
-const getPlaylistById = async (playlist_id) => {
+const deleteSongToAPlaylist = async (playlist_id, song_id) => {
+    try {
+        const playlistRef = db.collection('playlist').doc(playlist_id)
+        const verify = await playlistRef.collection('songs').doc(song_id).get()
+        if (verify.exists) {
+            await playlistRef.collection('songs').doc(song_id).delete()
+            return { valid: true }
+        }
+        else {
+            return { valid: false }
+        }
+
+    } catch (error) {
+        console.error("Error al elimnar canción a la playlist:", error);
+        throw error;
+    }
+}
+
+const getPlaylistById = async (playlist_id, user_id) => {
     try {
         const playlistSnapshot = await db.collection('playlist').doc(playlist_id).get()
 
         if (playlistSnapshot.exists) {
-            const playlistData = playlistSnapshot.data()
+            console.log(playlistSnapshot.data().user_id)
+            if (playlistSnapshot.data().user_id != user_id) {
+                return { found: true, valid: false }
+            }
+            else {
+                const playlistData = playlistSnapshot.data()
 
-            const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').orderBy('addedAt', 'asc').get();
-            const songsArray = []
+                const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').orderBy('addedAt', 'asc').get();
+                const songsArray = []
 
-            songsSnapshot.forEach((songDoc) => {
-                const songData = songDoc.data()
-                const formattedDate = formatTimestamp(songData.addedAt);
-                songsArray.push({
-                    id: songDoc.id,
-                    ...songData,
-                    addedAt: formattedDate 
+                songsSnapshot.forEach((songDoc) => {
+                    const songData = songDoc.data()
+                    const formattedDate = formatTimestamp(songData.addedAt);
+                    songsArray.push({
+                        id: songDoc.id,
+                        ...songData,
+                        addedAt: formattedDate
+                    });
                 });
-            });
 
-            return {
-                found: true,
-                playlist: {
-                    ...playlistData,
-                    songs: songsArray
-                },
-                valid: true
-            };
+                return {
+                    found: true,
+                    playlist: {
+                        ...playlistData,
+                        songs: songsArray
+                    },
+                    valid: true
+                };
+
+            }
+
         } else {
             console.log("Playlist not found.")
             return { found: false, valid: false }
@@ -158,4 +184,4 @@ const validPlaylist = async (playlist_id) => {
     }
 }
 
-export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist, validPlaylist }
+export { insertPlaylist, fetchPlaylists, deleteById, fetchUserPlaylists, getPlaylistById, addSongToAPlaylist, validPlaylist, deleteSongToAPlaylist }

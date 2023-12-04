@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { validatePlaylist } from "../models/playlist.js"
-import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist } from "../services/playlist.js"
+import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist, deleteSongToAPlaylist } from "../services/playlist.js"
 import { handleError } from "../utils/errorHandle.js"
 
 
@@ -105,6 +105,26 @@ const addSongToPlaylist = async (req, res) => {
     }
 }
 
+const deleteSongToPlaylist = async (req, res) => {
+    try {
+        const playlist_id = req.params.playlistId
+        const song_id = req.params.songId
+        const response = await deleteSongToAPlaylist(playlist_id, song_id)
+        if(!response.valid){
+            res.status(404)
+            res.send({ message: `La cancion de ID: ${song_id} no se encontró en la playlist de ID: ${playlist_id}` })
+            return
+        }
+        res.status(200)
+        res.send({message: `La cancion de ID: ${song_id} se eliminó de la playlist de ID: ${playlist_id}` })
+        
+        
+    } catch (error) {
+        console.error(error);
+        handleError(res, 'ERROR_DELETING_PLAYLIST')
+    }
+}
+
 const getPlaylist = async (req, res) => {
     try {
         const playlist_id = req.params.playlistId
@@ -116,4 +136,4 @@ const getPlaylist = async (req, res) => {
     }
 };
 
-export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylist }
+export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylist, deleteSongToPlaylist }
