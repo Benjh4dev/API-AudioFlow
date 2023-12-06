@@ -1,6 +1,6 @@
 import { z } from "zod"
 import { validatePlaylist } from "../models/playlist.js"
-import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylistById, addSongToAPlaylist, deleteSongToAPlaylist } from "../services/playlist.js"
+import { insertPlaylist, fetchPlaylists, fetchUserPlaylists, deleteById, getPlaylist, addSongToAPlaylist, deleteSongToAPlaylist } from "../services/playlist.js"
 import { handleError } from "../utils/errorHandle.js"
 
 
@@ -125,10 +125,10 @@ const deleteSongToPlaylist = async (req, res) => {
     }
 }
 
-const getPlaylist = async (req, res) => {
+const getPlaylistById = async (req, res) => {
     try {
         const playlist_id = req.params.playlistId
-        const playlist = await getPlaylistById(playlist_id)
+        const playlist = await getPlaylist(playlist_id)
         res.status(200)
         res.json(playlist)
     } catch (error) {
@@ -136,4 +136,4 @@ const getPlaylist = async (req, res) => {
     }
 };
 
-export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylist, deleteSongToPlaylist }
+export { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylistById, deleteSongToPlaylist }

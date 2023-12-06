@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { checkJwt } from "../middlewares/session.js"
 import { verifyUserId } from "../middlewares/verifyUserId.js"
-import { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylist, deleteSongToPlaylist } from "../controllers/playlist.js";
+import { addPlaylist, getPlaylists, getUserPlaylists, deletePlaylist, addSongToPlaylist, getPlaylistById, deleteSongToPlaylist } from "../controllers/playlist.js";
 import { verifyPlaylistId } from "../middlewares/verifyPlaylistId.js";
 import { verifyPlaylistIdToken } from "../middlewares/verifyPlaylistIdToken.js";
 import { verifySongId } from "../middlewares/verifySongId.js";
@@ -13,7 +13,7 @@ router.delete('/:id', checkJwt, deletePlaylist, verifyUserId)
 
 router.get('/', getPlaylists)
 
-router.get('/:playlistId', getPlaylist)
+router.get('/:playlistId', getPlaylistById)
 router.get('/user/:id', checkJwt, getUserPlaylists)
 
 //RUTA AGREGAR CANCIÓN A PLAYLIST
