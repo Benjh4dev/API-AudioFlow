@@ -9,7 +9,7 @@ import { verifySongId } from "../middlewares/verifySongId.js";
 const router = Router()
 
 router.post('/:id', checkJwt, verifyUserId, addPlaylist)
-router.delete('/:id', checkJwt, verifyUserId, deletePlaylist)
+router.delete('/:id', checkJwt, deletePlaylist)
 
 router.get('/', getPlaylists)
 
