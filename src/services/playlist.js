@@ -17,7 +17,7 @@ const insertPlaylist = async ({ name, user_id }) => {
     console.log("Playlist agregada con ID: ", docRef.id)
     return playlistWithID
 }
-
+/*
 const fetchPlaylists = async () => {
     try {
         const playlistCollection = db.collection("playlist");
@@ -38,6 +38,36 @@ const fetchPlaylists = async () => {
         throw error;
     }
 }
+*/
+const fetchPlaylists = async () => {
+    try {
+        const playlistCollection = db.collection("playlist")
+        const snapshot = await playlistCollection.get()
+
+        if (snapshot.empty) {
+            console.log("No se encontraron playlists.")
+            return []
+        }
+
+        const playlists = []
+        for (const doc of snapshot.docs) {
+            const playlistData = doc.data()
+            const songsSnapshot = await db.collection('playlist').doc(doc.id).collection('songs').orderBy('addedAt', 'asc').limit(1).get()
+            const hasSongs = !songsSnapshot.empty
+            const image = hasSongs ? songsSnapshot.docs[0].data().coverURL : ""
+            playlists.push({
+                id: doc.id,
+                ...playlistData,
+                image: image
+            })
+        }
+        return playlists
+    } catch (error) {
+        console.error("Error al obtener las playlists de la base de datos:", error)
+        throw error
+    }
+}
+
 
 const fetchUserPlaylists = async (user_id) => {
     try {
@@ -133,7 +163,6 @@ const getPlaylistById = async (playlist_id, user_id) => {
                 return { found: true, valid: false }
             }
             else {
-
                 return {
                     found: true,
                     valid: true
@@ -170,11 +199,13 @@ const getPlaylist = async (playlist_id) => {
                     addedAt: formattedDate
                 });
             });
-            console.log('lol')
+            const image = songsArray.length > 0 ? songsArray[0].coverURL : ""
+
             return {
                 found: true,
                 playlist: {
                     ...playlistData,
+                    image: image,
                     songs: songsArray
                 },
                 valid: true

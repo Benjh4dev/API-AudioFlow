@@ -32,7 +32,6 @@ const addPlaylist = async (req, res) => {
 const getPlaylists = async (req, res) => {
     try {   
         const playlists = await fetchPlaylists()
-        console.log(playlists)
         res.status(200)
         res.send({ playlists }) 
 
@@ -128,6 +127,7 @@ const deleteSongToPlaylist = async (req, res) => {
 const getPlaylistById = async (req, res) => {
     try {
         const playlist_id = req.params.playlistId
+        console.log(playlist_id)
         const playlist = await getPlaylist(playlist_id)
         res.status(200)
         res.json(playlist)
