@@ -77,14 +77,21 @@ const fetchUserPlaylists = async (user_id) => {
             console.log("No se encontraron playlists del usuario.");
             return [];
         }
-
-        const userPlaylists = [];
-        snapshot.forEach(doc => {
-            userPlaylists.push({ id: doc.id, ...doc.data() });
-        });
-
-        console.log("Playlists del usuario recuperadas con éxito.");
-        return userPlaylists;
+        
+        const playlists = []
+        for (const doc of snapshot.docs) {
+            const playlistData = doc.data()
+            const songsSnapshot = await db.collection('playlist').doc(doc.id).collection('songs').orderBy('addedAt', 'asc').limit(1).get()
+            const hasSongs = !songsSnapshot.empty
+            const image = hasSongs ? songsSnapshot.docs[0].data().coverURL : ""
+            playlists.push({
+                id: doc.id,
+                ...playlistData,
+                image: image
+            })
+        }
+        return playlists
+       
     } catch (error) {
         console.error("Error al obtener las playlist de la base de datos:", error);
         throw error;
