@@ -1,0 +1,50 @@
+name: Push to Azure Container Registry
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
+
+jobs:
+  push-to-acr:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Login to Azure Container Registry
+      uses: azure/docker-login@v1
+      with:
+        login-server: audioflow.azurecr.io
+        username: ${{ secrets.AZURE_REGISTRY_USERNAME }}
+        password: ${{ secrets.AZURE_REGISTRY_PASSWORD }}
+
+    - name: Check if the image exists in Azure Container Registry
+      id: check-image-exists
+      run: |
+        IMAGE="audioflow.azurecr.io/api-audioflow:latest"
+        if docker manifest inspect $IMAGE > /dev/null 2>&1; then
+          echo "::set-output name=image_exists::true"
+        else
+          echo "::set-output name=image_exists::false"
+        fi
+
+    - name: Delete Docker image from Azure Container Registry if it exists
+      if: steps.check-image-exists.outputs.image_exists == 'true'
+      run: |
+        docker image rm -f audioflow.azurecr.io/api-audioflow:latest
+
+    - name: Pull and tag Docker image from Docker Hub
+      run: |
+        docker pull benjh4/api-audioflow:latest
+        docker tag benjh4/api-audioflow:latest audioflow.azurecr.io/api-audioflow:latest
+
+    - name: Push Docker image to Azure Container Registry
+      run: docker push audioflow.azurecr.io/api-audioflow:latest
+
+    - name: Restart Azure App Service
+      run: |
+        az login --service-principal -u ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }} -p ${{ secrets.AZURE_SERVICE_PRINCIPAL_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
+        az webapp restart --name api-audioflow --resource-group Audioflow
