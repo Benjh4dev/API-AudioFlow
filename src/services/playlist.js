@@ -191,7 +191,7 @@ const getPlaylistById = async (playlist_id, user_id) => {
 const getPlaylist = async (playlist_id) => {
     try {
         const playlistSnapshot = await db.collection('playlist').doc(playlist_id).get()
-
+        
         if (playlistSnapshot.exists) {
             const playlistData = playlistSnapshot.data()
             const songsSnapshot = await db.collection('playlist').doc(playlist_id).collection('songs').orderBy('addedAt', 'asc').get();
@@ -207,14 +207,15 @@ const getPlaylist = async (playlist_id) => {
                 });
             });
             const image = songsArray.length > 0 ? songsArray[0].coverURL : ""
-
+            const playlist = {
+                id: playlistSnapshot.id,
+                ...playlistData,
+                image: image,
+                songs: songsArray
+            }
             return {
                 found: true,
-                playlist: {
-                    ...playlistData,
-                    image: image,
-                    songs: songsArray
-                },
+                playlist,
                 valid: true
             };
 
