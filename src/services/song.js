@@ -1,4 +1,5 @@
 import { db } from "../firebase/config.js"
+import { cascadeDelete } from "../utils/cascadeDeleteHandle.js"
 import { uploadToStorage } from "../utils/storageHandle.js"
 
 const insertSong = async ({ name, audio_file, cover_art, duration, artist, user_id }) => {
@@ -79,15 +80,34 @@ const deleteById = async (user_id, song_id) => {
     if(song.data().user_id != user_id) {
       return {found: true, valid: false}
     }
+    /* VERSION ANTIGUA, ESTÁ FUNCIONANDO PERFECTAMENTE, SIN EMBARGO, SE OPTÓ POR LA NUEVA VERSIÓN PERO ESTÁ SIN TESTEAR
     await db.collection('song').doc(song_id).delete()
+    await cascadeDelete(song_id)
+    */
+    const deleteSongPromise = db.collection('song').doc(song_id).delete()
+    const cascadeDeletePromise = cascadeDelete(song_id)
+    await Promise.all([deleteSongPromise, cascadeDeletePromise])
     return {found: true, valid: true}
     
   } catch (error) {
-    console.error("Error al eliminar la cancion de la base de datos:", error);
-    throw error;
+    console.error("Error al eliminar la cancion de la base de datos:", error)
+    throw error
+  }
+}
+
+const getById = async (song_id) => {
+  try {
+    const song = await db.collection('song').doc(song_id).get()
+    if (!song.exists) {
+      return { found: false }
+    }
+    return { found: true, song: song.data() }
+  } catch (error) {
+    console.error("Error al obtener la canción de la base de datos:", error)
+    throw error
   }
 }
 
 
 
-export { insertSong, fetchSongs, fetchUserSongs, deleteById }
+export { insertSong, fetchSongs, fetchUserSongs, deleteById, getById }

@@ -7,7 +7,7 @@ const verifyUserId = async (req, res, next) => {
   
       if (!userIdFromToken || !userIdFromRequest) {
         res.status(401)
-        return res.send({ message: 'No se entregan los parametros' })
+        return res.send({ message: 'No estás autorizado para realizar esta acción' })
       }
 
       const user = await getUserById(userIdFromRequest);
