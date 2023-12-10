@@ -28,6 +28,7 @@ jobs:
       FIREBASE_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL }}
       FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
       FIREBASE_UNIVERSE_DOMAIN: ${{ secrets.FIREBASE_UNIVERSE_DOMAIN }}
+      NODE_ENV: ${{ secrets.NODE_ENV }}
 
     steps:
       - name: Checkout Repository
@@ -39,6 +40,7 @@ jobs:
           echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}" >> .env
           echo "STORAGE_URL=${STORAGE_URL}" >> .env
           echo "TEST_TEST=${TEST_TEST}" >> .env
+          echo "NODE_ENV=${NODE_ENV}" >> .env
 
       - name: Create Firebase credentials JSON
         run: |
@@ -63,6 +65,9 @@ jobs:
 
       - name: Run Tests
         run: npm test
+      
+      - name: Remove NODE_ENV from .env
+        run: sed -i '/NODE_ENV/d' .env
 
       - name: Build and Push Docker Image
         if: success()  

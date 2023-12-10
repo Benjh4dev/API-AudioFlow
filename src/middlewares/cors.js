@@ -11,6 +11,11 @@ export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => (
     origin: (origin, callback) => {
       console.log('Request Origin:', origin)
 
+      if (process.env.NODE_ENV === 'test') {
+        console.log('Allowing all origins for testing');
+        return callback(null, true);
+      }
+      
       if (acceptedOrigins.includes(origin)) {
         console.log('Allowed Origin')
         return callback(null, true)
