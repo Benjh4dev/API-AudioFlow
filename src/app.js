@@ -19,7 +19,7 @@ app.listen(port, () => {
 })
 
 app.get('/', async (req, res) => {
-    res.send( "Welcome to Audiflow API webhook 1"  );
+    res.send( "Welcome to Audiflow API webhook" );
 });
 
 export default app
