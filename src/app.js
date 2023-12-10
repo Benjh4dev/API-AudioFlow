@@ -6,8 +6,8 @@ import { corsMiddleware } from './middlewares/cors.js'
 
 const app = express()
 
-// app.use(corsMiddleware()) 
-app.use(cors())
+app.use(corsMiddleware()) 
+// app.use(cors())
 app.use(express.json())
 app.disable('x-powered-by')
 app.use('/api', router)
