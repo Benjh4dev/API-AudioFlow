@@ -1,8 +1,9 @@
 import cors from 'cors'
 
 const ACCEPTED_ORIGINS = [
-  'http://localhost:3002',
+  'http://localhost:3001',
   'http://localhost:5173',
+  'https://audiofloww.azurewebsites.net'
 ];
 
 export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => (req, res, next) =>

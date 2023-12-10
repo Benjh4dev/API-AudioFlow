@@ -69,5 +69,5 @@ jobs:
         run: |
           echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
           docker build -t api:latest .
-          docker tag api:latest $DOCKERHUB_USERNAME/api-audioflow-test:latest
-          docker push $DOCKERHUB_USERNAME/api-audioflow-test:latest
+          docker tag api:latest $DOCKERHUB_USERNAME/api-audioflow:latest
+          docker push $DOCKERHUB_USERNAME/api-audioflow:latest
