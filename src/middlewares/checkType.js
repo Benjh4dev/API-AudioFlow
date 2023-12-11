@@ -56,10 +56,8 @@ const checkTypes = async (req, res, next) => {
         const duracionEnSegundos = await calcularDuracionEnSegundos(audioFile.buffer, audioType.mime);
         req.body.duration = duracionEnSegundos
 
-        console.log("ta weno mi papu")
         next()
     } catch (error) {
-        console.log(error)
         handleError(res, 'ERROR_UPLOAD_FILE')
     }
 }

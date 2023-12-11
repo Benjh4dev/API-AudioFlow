@@ -6,12 +6,10 @@ const uploadMiddleware = (req, res, next) => {
     try {
         upload.single('file')(req, res, (err) => {
             if (err) {
-              console.log(err)
               return res.status(400).json({ error: 'No se incluye el campo file en la petición' })
             }
         
             const contentType = req.get('content-type')
-            console.log(contentType)
             const type = contentType.split(';')[0]
         
             if (type !== 'multipart/form-data') {

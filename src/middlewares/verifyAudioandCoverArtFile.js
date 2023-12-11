@@ -9,7 +9,6 @@ const verifyAudioAndCoverArtFiles = (req, res, next) => {
   try {
     upload.fields([{ name: 'audio_file', maxCount: 1 }, { name: 'cover_art', maxCount: 1 }])(req, res, (err) => {
       if (err) {
-        console.log(err);
         return res.status(400).json({ error: 'Error al subir archivos: ' + err.message })
       }
 
@@ -21,7 +20,6 @@ const verifyAudioAndCoverArtFiles = (req, res, next) => {
       }
 
       const result = validateSong(req.body)
-      console.log(result)
       let hasErrors = !result.success
       const errorIssues = result.error ? [...result.error.issues] : []
 
@@ -51,7 +49,6 @@ const verifyAudioAndCoverArtFiles = (req, res, next) => {
         return
       }
 
-      console.log("excelente papu")
       next()
     });
   } catch (error) {

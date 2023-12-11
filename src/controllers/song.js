@@ -10,7 +10,6 @@ const addSong = async (req, res) => {
     const user_id = req.params.id 
     const cover_art = req.files['cover_art'][0]
     const audio_file = req.files['audio_file'][0]
-    console.log(name, cover_art, audio_file)
 
     const song = await insertSong({ name, audio_file, cover_art, duration, artist, user_id })
     res.status(201)
@@ -25,11 +24,9 @@ const addSong = async (req, res) => {
 const getSongs = async (req, res) => {
   try {
     const songs = await fetchSongs()
-    console.log(songs)
     res.status(200)
     res.send({songs})
   } catch (error) {
-    console.log(error)
     handleError(res, 'ERROR_FETCHING_SONGS');
   };
 };
@@ -54,7 +51,6 @@ const deleteSong = async (req, res) => {
     const song_id = req.params.id
     const user_id = req.user.id 
     const response = await deleteById(user_id, song_id)
-    console.log(response)
     if(!response.found){
       res.status(404)
       res.send({message: "La canción no se encontró"})
@@ -71,7 +67,6 @@ const deleteSong = async (req, res) => {
     
 
   } catch (error) {
-    console.log(error)
     handleError(res, 'ERROR_DELETING_SONG')
   }
 }
