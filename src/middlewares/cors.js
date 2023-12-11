@@ -1,8 +1,9 @@
 import cors from 'cors'
 
 const ACCEPTED_ORIGINS = [
-  'http://localhost:3002',
+  'http://localhost:3001',
   'http://localhost:5173',
+  'https://audiofloww.azurewebsites.net'
 ];
 
 export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => (req, res, next) =>
@@ -10,6 +11,11 @@ export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => (
     origin: (origin, callback) => {
       console.log('Request Origin:', origin)
 
+      if (process.env.NODE_ENV === 'test') {
+        console.log('Allowing all origins for testing');
+        return callback(null, true);
+      }
+      
       if (acceptedOrigins.includes(origin)) {
         console.log('Allowed Origin')
         return callback(null, true)

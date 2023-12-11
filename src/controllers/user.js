@@ -18,7 +18,6 @@ const getUser = async (req, res) => {
         }
         res.status(200).json(userData)
     } catch (error) {
-        console.log(error.message)
         handleError(res, 'ERROR_GET_USER_BY_ID')
     }
 }
@@ -74,7 +73,6 @@ const addUser = async (req, res) => {
         res.status(201)
         res.send({user: user})
     } catch (error) {
-        console.log(error)
         handleError(res, 'ERROR_ADD_USER') 
     }
 }
@@ -122,7 +120,6 @@ const updatePassword = async (req, res) => {
         res.send({user: user})
 
     } catch (error) {
-        console.log(error)
         handleError(res, 'ERROR_UPDATE_USER')
     }
 }
@@ -150,7 +147,6 @@ const updateEmail = async (req, res) => {
         
         const findUser = await getUserById(userId)
         if(req.body.password) {
-            console.log(req.body.password)
             const verifyCurrentPassword = await comparePassword(req.body.password, findUser.password)
             if (!verifyCurrentPassword) {
                 const currentPasswordError = {
@@ -174,7 +170,6 @@ const updateEmail = async (req, res) => {
         res.send({user: user})
 
     } catch (error) {
-        console.log(error)
         handleError(res, 'ERROR_UPDATE_USER')
     }
 }
@@ -182,7 +177,6 @@ const updateEmail = async (req, res) => {
 
 const updateProfilePicture = async (req, res) => {
     try {
-        console.log(req.body)
         const userId = req.params.id
         const userData = await getUserById(userId)
 
@@ -194,13 +188,11 @@ const updateProfilePicture = async (req, res) => {
         if(!userId){
             res.status(404).send({error: 'El usuario no ha sido encontrado.'})
         }
-        console.log(req.file)
         if (!req.file) {
             return res.status(400).json({ error: 'No se proporcionó un archivo' })
         }
         
         const valid = await verifyType(req.file)
-        console.log(valid)
 
         if(!valid.ok) {
             return res.status(400).json({ error: 'Tipo de archivo inválido, solo se aceptan jpeg, jpg o png.' })

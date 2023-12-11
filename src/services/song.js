@@ -3,7 +3,6 @@ import { cascadeDelete } from "../utils/cascadeDeleteHandle.js"
 import { uploadToStorage } from "../utils/storageHandle.js"
 
 const insertSong = async ({ name, audio_file, cover_art, duration, artist, user_id }) => {
-    console.log(audio_file , cover_art)
     const [coverURL, audioURL] = await Promise.all([
         uploadToStorage(cover_art),
         uploadToStorage(audio_file)
@@ -31,7 +30,6 @@ const fetchSongs = async () => {
       const snapshot = await songsCollection.get();
   
       if (snapshot.empty) {
-        console.log("No se encontraron canciones.");
         return [];
       }
   
@@ -40,7 +38,6 @@ const fetchSongs = async () => {
         songs.push({ id: doc.id, ...doc.data() });
       });
   
-      console.log("Canciones recuperadas con éxito.");
       return songs;
     } catch (error) {
       console.error("Error al obtener las canciones de la base de datos:", error);
@@ -54,7 +51,6 @@ const fetchUserSongs = async (user_id) => {
     const snapshot = await songsCollection.where("user_id", "==", user_id).get();
 
     if (snapshot.empty) {
-      console.log("No se encontraron canciones del usuario.");
       return [];
     }
 
@@ -63,7 +59,6 @@ const fetchUserSongs = async (user_id) => {
       userSongs.push({ id: doc.id, ...doc.data() });
     });
 
-    console.log("Canciones del usuario recuperadas con éxito.");
     return userSongs;
   } catch (error) {
     console.error("Error al obtener las canciones de la base de datos:", error);

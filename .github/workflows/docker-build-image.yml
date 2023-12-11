@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Test and Build Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build_and_push:
+  test_and_build:
     runs-on: ubuntu-latest
 
     env:
@@ -27,6 +27,7 @@ jobs:
       FIREBASE_AUTH_PROVIDER_X509_CERT_URL: ${{ secrets.FIREBASE_AUTH_PROVIDER_X509_CERT_URL }}
       FIREBASE_CLIENT_X509_CERT_URL: ${{ secrets.FIREBASE_CLIENT_X509_CERT_URL }}
       FIREBASE_UNIVERSE_DOMAIN: ${{ secrets.FIREBASE_UNIVERSE_DOMAIN }}
+      NODE_ENV: ${{ secrets.NODE_ENV }}
 
     steps:
       - name: Checkout Repository
@@ -38,12 +39,37 @@ jobs:
           echo "JWT_SECRET_KEY=${JWT_SECRET_KEY}" >> .env
           echo "STORAGE_URL=${STORAGE_URL}" >> .env
           echo "TEST_TEST=${TEST_TEST}" >> .env
+          echo "NODE_ENV=${NODE_ENV}" >> .env
 
       - name: Create Firebase credentials JSON
         run: |
           echo '{"type": "'${FIREBASE_TYPE}'", "project_id": "'${FIREBASE_PROJECT_ID}'", "private_key_id": "'${FIREBASE_PRIVATE_KEY_ID}'", "private_key": "'${FIREBASE_PRIVATE_KEY}'", "client_email": "'${FIREBASE_CLIENT_EMAIL}'", "client_id": "'${FIREBASE_CLIENT_ID}'", "auth_uri": "'${FIREBASE_AUTH_URI}'", "token_uri": "'${FIREBASE_TOKEN_URI}'", "auth_provider_x509_cert_url": "'${FIREBASE_AUTH_PROVIDER_X509_CERT_URL}'", "client_x509_cert_url": "'${FIREBASE_CLIENT_X509_CERT_URL}'", "universe_domain": "'${FIREBASE_UNIVERSE_DOMAIN}'"}' > credentials.json
 
+      - name: Copy credentials.json to the right directory
+        run: cp credentials.json /home/runner/work/API-AudioFlow/API-AudioFlow/src/firebase/
+        
+      - name: Set up Node.js To Verify Test
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Start Server
+        run: npm start &
+
+      - name: Wait for Server to Start
+        run: sleep 5
+
+      - name: Run Tests
+        run: npm test
+      
+      - name: Remove NODE_ENV from .env
+        run: sed -i '/NODE_ENV/d' .env
+
       - name: Build and Push Docker Image
+        if: success()  
         run: |
           echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
           docker build -t api:latest .

@@ -45,7 +45,6 @@ const fetchPlaylists = async () => {
         const snapshot = await playlistCollection.get()
 
         if (snapshot.empty) {
-            console.log("No se encontraron playlists.")
             return []
         }
 
@@ -74,7 +73,6 @@ const fetchUserPlaylists = async (user_id) => {
         const playlistCollection = db.collection("playlist");
         const snapshot = await playlistCollection.where("user_id", "==", user_id).get();
         if (snapshot.empty) {
-            console.log("No se encontraron playlists del usuario.");
             return [];
         }
         
@@ -178,7 +176,6 @@ const getPlaylistById = async (playlist_id, user_id) => {
             }
 
         } else {
-            console.log("Playlist not found.")
             return { found: false, valid: false }
         }
     } catch (error) {
@@ -220,7 +217,6 @@ const getPlaylist = async (playlist_id) => {
             };
 
         } else {
-            console.log("Playlist not found.")
             return { found: false, valid: false }
         }
     } catch (error) {

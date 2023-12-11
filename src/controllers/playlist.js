@@ -24,7 +24,6 @@ const addPlaylist = async (req, res) => {
         res.json({ playlist })
 
     } catch (error) {  
-        console.log(error)
         handleError(res, 'ERROR_ADD_PLAYLIST')
     }
 }
@@ -36,7 +35,6 @@ const getPlaylists = async (req, res) => {
         res.send({ playlists }) 
 
     } catch (error) {
-        console.log(error)
         handleError(res, 'ERROR_FETCHING_PLAYLISTS');
     }
 }
@@ -58,7 +56,6 @@ const deletePlaylist = async (req, res) => {
         const playlist_id = req.params.id
         const user_id = req.user.id
         const response = await deleteById(user_id, playlist_id)
-        console.log(response)
         if(!response.found){
             res.status(404)
             res.send({message: "La playlist no se encontró"})
@@ -127,7 +124,6 @@ const deleteSongToPlaylist = async (req, res) => {
 const getPlaylistById = async (req, res) => {
     try {
         const playlist_id = req.params.playlistId
-        console.log(playlist_id)
         const playlist = await getPlaylist(playlist_id)
         res.status(200)
         res.json(playlist)

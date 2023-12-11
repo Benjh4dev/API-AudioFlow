@@ -13,6 +13,7 @@ const cleanFileName = (fileName) => {
   return file;
 };
 
+
 readdirSync(__dirname).filter((fileName) => {
   const cleanName = cleanFileName(fileName);
   if (cleanName !== "index") {

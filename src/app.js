@@ -6,8 +6,8 @@ import { corsMiddleware } from './middlewares/cors.js'
 
 const app = express()
 
-//app.use(corsMiddleware()) 
-app.use(cors())
+app.use(corsMiddleware()) 
+// app.use(cors())
 app.use(express.json())
 app.disable('x-powered-by')
 app.use('/api', router)
@@ -18,8 +18,9 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`)
 })
 
+
 app.get('/', async (req, res) => {
-    res.send( "Welcome to Audiflow API webhook"  );
+    res.send( "Welcome to Audiflow API webhook" );
 });
 
 export default app

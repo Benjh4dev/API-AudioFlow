@@ -11,7 +11,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const credentialsPath = join(__dirname, 'credentials.json');
 
-console.log(credentialsPath)
 const storageURL = process.env.STORAGE_URL
 // CONFIGURACION DE FIREBASE PARA LA BASE DE DATOS USANDO MODO ADMIN
 initializeApp({
